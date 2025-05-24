@@ -1,4 +1,3 @@
-import React from "react";
 import { useParams } from "react-router-dom";
 import { useMemo } from "react";
 import { MDXProvider } from "@mdx-js/react";

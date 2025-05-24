@@ -1,5 +1,3 @@
-import React from "react";
-
 const data = [10, 20, 30, 40, 60, 80, 120, 160, 200, 250, 300, 350, 400, 420, 430, 440, 445, 448, 450];
 const max = Math.max(...data);
 const width = 320;

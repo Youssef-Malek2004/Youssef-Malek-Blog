@@ -1,5 +1,3 @@
-import React from "react";
-
 const data = [0.1, 0.2, 0.35, 0.5, 0.7, 0.85, 0.93, 0.97, 1.0];
 const width = 320;
 const height = 120;
