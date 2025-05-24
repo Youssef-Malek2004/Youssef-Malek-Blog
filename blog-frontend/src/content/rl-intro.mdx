@@ -1,0 +1,44 @@
+---
+title: "Introduction to Reinforcement Learning"
+description: "A gentle introduction to the core ideas and terminology of RL, with interactive examples."
+date: "2024-05-23"
+---
+
+# Introduction to Reinforcement Learning
+
+> **Reinforcement Learning (RL)** is a branch of machine learning where an agent learns to make decisions by interacting with an environment. The agent receives rewards or penalties based on its actions and aims to maximize the cumulative reward over time.
+
+## Key Concepts
+
+- **Agent**: The learner or decision maker.
+- **Environment**: The world the agent interacts with.
+- **Reward**: Feedback from the environment.
+- **Policy**: The strategy used by the agent to decide actions.
+
+RL has been used in robotics, games, recommendation systems, and more.
+
+## Example: Simple RL Loop (Python)
+
+```python
+for episode in range(100):
+    state = env.reset()
+    done = False
+    while not done:
+        action = agent.act(state)
+        next_state, reward, done, _ = env.step(action)
+        agent.learn(state, action, reward, next_state)
+        state = next_state
+```
+
+## Why RL is Exciting
+
+- Powers breakthroughs in robotics, games (AlphaGo, Dota 2), and recommendation systems.
+- Enables agents to learn complex behaviors from scratch.
+
+## Chart: Reward Over Time
+
+<RewardChart />
+
+---
+
+> **Tip:** You can embed React components like charts, callouts, or even interactive widgets in MDX!

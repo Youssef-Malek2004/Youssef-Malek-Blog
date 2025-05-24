@@ -1,0 +1,38 @@
+---
+title: "Q-Learning Explained"
+description: "Understand the Q-Learning algorithm, its update rule, and see a chart of Q-value convergence."
+date: "2024-05-22"
+---
+
+# Q-Learning Explained
+
+Q-Learning is a popular model-free reinforcement learning algorithm. It learns the value of taking a given action in a given state, known as the Q-value.
+
+## Q-Learning Update Rule
+
+The Q-value is updated as follows:
+
+```math
+Q(s, a) \leftarrow Q(s, a) + \alpha [r + \gamma \max_{a'} Q(s', a') - Q(s, a)]
+```
+
+Where:
+
+- $s$ is the current state
+- $a$ is the action taken
+- $r$ is the reward received
+- $s'$ is the next state
+- $\alpha$ is the learning rate
+- $\gamma$ is the discount factor
+
+## Example: Q-Table Update (Python)
+
+```python
+Q[state, action] = Q[state, action] + alpha * (reward + gamma * np.max(Q[next_state]) - Q[state, action])
+```
+
+## Chart: Q-Value Convergence
+
+<QValueChart />
+
+Q-Learning is the foundation for many modern RL algorithms.
