@@ -75,3 +75,13 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.noselect,
+.noselect * {
+  user-select: none !important;
+}
+
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}

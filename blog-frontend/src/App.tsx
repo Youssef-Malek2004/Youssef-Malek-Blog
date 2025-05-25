@@ -7,7 +7,6 @@ import { Routes, Route } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 import { ThemeProvider, useTheme } from "next-themes";
 
-// AppContainer applies theme-based bg and color
 const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { theme } = useTheme();
 

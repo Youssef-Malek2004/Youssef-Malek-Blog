@@ -15,25 +15,47 @@ const Navbar = () => {
   const buttonHoverBg = theme === "dark" ? "gray.700" : "gray.100";
   const [hoverRefs, isHovered] = useHoverMulti();
 
+  const NavItem = ({ to, children }: { to: string; children: React.ReactNode }) => {
+    return (
+      <Box position="relative" display="inline-block" role="group">
+        <ChakraRouterLink as={RouterLink} to={to} fontWeight={500} color={navColor} textDecoration="none" _hover={{ color: navHover }}>
+          {children}
+        </ChakraRouterLink>
+        <Box
+          position="absolute"
+          bottom={-1}
+          left={0}
+          height="2px"
+          width="0%"
+          bg={navHover}
+          transition="width 0.3s ease-in-out"
+          _groupHover={{ width: "100%" }}
+        />
+      </Box>
+    );
+  };
+
   return (
     <Box
       as="nav"
       w="100vw"
-      left={0}
-      px={8}
-      py={4}
-      borderBottom="1px solid"
-      borderColor={theme === "dark" ? "gray.700" : "gray.100"}
-      mb={8}
-      bg={theme === "dark" ? "gray.900" : "white"}
-      boxShadow="sm"
+      maxHeight="5vw"
+      px={4}
+      py={2}
+      mb={0}
       position="sticky"
       top={0}
       zIndex={10}
       color={navColor}
+      bg={theme === "dark" ? "rgba(26, 32, 44, 0.0)" : "rgba(255, 255, 255, 0.0)"}
+      backdropFilter="blur(10px)"
       transition="background 0.2s, color 0.2s"
+      boxShadow="none"
+      border="none"
+      className="noselect"
     >
       <Flex align="center" justify="space-between" w="100%">
+        {/* Logo & Title */}
         <ChakraRouterLink
           as={RouterLink}
           to="/"
@@ -45,7 +67,6 @@ const Navbar = () => {
           display="flex"
           alignItems="center"
         >
-          {/* Icon */}
           <Box
             as="span"
             ref={hoverRefs[0]}
@@ -61,59 +82,21 @@ const Navbar = () => {
             <FoundInLoopIcon width={50} height={50} />
           </Box>
 
-          {/* Text */}
           <Box ref={hoverRefs[1]} cursor="pointer">
             Found in the Loop
           </Box>
         </ChakraRouterLink>
 
+        {/* Navigation Links */}
         <Flex gap={6}>
-          <ChakraRouterLink
-            as={RouterLink}
-            to="/blog"
-            color={navColor}
-            fontWeight={500}
-            _hover={{ color: navHover, textDecoration: "none" }}
-          >
-            Blog
-          </ChakraRouterLink>
-          <ChakraRouterLink
-            as={RouterLink}
-            to="/about"
-            color={navColor}
-            fontWeight={500}
-            _hover={{ color: navHover, textDecoration: "none" }}
-          >
-            About
-          </ChakraRouterLink>
-          <ChakraRouterLink
-            as={RouterLink}
-            to="/roadmap"
-            color={navColor}
-            fontWeight={500}
-            _hover={{ color: navHover, textDecoration: "none" }}
-          >
-            Roadmap
-          </ChakraRouterLink>
-          <ChakraRouterLink
-            as={RouterLink}
-            to="/subscribe"
-            color={navColor}
-            fontWeight={500}
-            _hover={{ color: navHover, textDecoration: "none" }}
-          >
-            Subscribe
-          </ChakraRouterLink>
-          <ChakraRouterLink
-            as={RouterLink}
-            to="/faqs"
-            color={navColor}
-            fontWeight={500}
-            _hover={{ color: navHover, textDecoration: "none" }}
-          >
-            FAQs
-          </ChakraRouterLink>
+          <NavItem to="/blog">Blog</NavItem>
+          <NavItem to="/about">About</NavItem>
+          <NavItem to="/roadmap">Roadmap</NavItem>
+          <NavItem to="/subscribe">Subscribe</NavItem>
+          <NavItem to="/faqs">FAQs</NavItem>
         </Flex>
+
+        {/* Theme Toggle */}
         <IconButton
           aria-label="Toggle color mode"
           onClick={() => setTheme(theme === "light" ? "dark" : "light")}
@@ -123,6 +106,7 @@ const Navbar = () => {
           bg={buttonBg}
           color={buttonColor}
           _hover={{ bg: buttonHoverBg }}
+          _focus={{ outline: "none", boxShadow: "none" }}
           transition="background 0.2s, color 0.2s"
           userSelect="none"
         >
