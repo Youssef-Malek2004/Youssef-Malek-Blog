@@ -3,7 +3,8 @@ import { Link as RouterLink } from "react-router-dom";
 import { ChakraRouterLink } from "./ChakraRouterLink";
 import { useTheme } from "next-themes";
 import { FaMoon, FaSun } from "react-icons/fa";
-import { LuBrain } from "react-icons/lu";
+import FoundInLoopIcon from "./ui/FoundInLoopIcon";
+import { useHoverMulti } from "../hooks/UseHover";
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -12,6 +13,7 @@ const Navbar = () => {
   const buttonBg = theme === "dark" ? "gray.800" : "white";
   const buttonColor = theme === "dark" ? "white" : "gray.900";
   const buttonHoverBg = theme === "dark" ? "gray.700" : "gray.100";
+  const [hoverRefs, isHovered] = useHoverMulti();
 
   return (
     <Box
@@ -38,16 +40,33 @@ const Navbar = () => {
           fontWeight="bold"
           fontSize="xl"
           color={navColor}
-          _hover={{ textDecoration: "none", color: navHover }}
+          textDecoration="none"
           mr={8}
           display="flex"
           alignItems="center"
         >
-          <Box as="span" mr={2} fontSize="2xl" display="flex" alignItems="center">
-            <LuBrain style={{ display: "inline", width: 28, height: 28 }} />
+          {/* Icon */}
+          <Box
+            as="span"
+            ref={hoverRefs[0]}
+            mr={2}
+            fontSize="2xl"
+            display="flex"
+            alignItems="center"
+            color={navColor}
+            transition="transform 0.6s ease"
+            transform={isHovered ? "rotate(360deg)" : "none"}
+            cursor="pointer"
+          >
+            <FoundInLoopIcon width={50} height={50} />
           </Box>
-          Found in the Loop
+
+          {/* Text */}
+          <Box ref={hoverRefs[1]} cursor="pointer">
+            Found in the Loop
+          </Box>
         </ChakraRouterLink>
+
         <Flex gap={6}>
           <ChakraRouterLink
             as={RouterLink}
