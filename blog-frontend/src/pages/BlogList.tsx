@@ -59,7 +59,7 @@ const BlogList = () => {
     <Flex w="90vw" mx="auto" gap={16} align="flex-start" py={12}>
       {/* Left Main Content */}
       <Box w="50%">
-        <Heading as="h1" size="sm" mb={8} color={theme === "dark" ? "#cc2277" : "#cc2277"}>
+        <Heading as="h1" size="sm" mb={8} color="#cc2277">
           Articles, Blogs and Tutorials
         </Heading>
 
