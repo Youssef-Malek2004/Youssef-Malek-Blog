@@ -9,10 +9,7 @@ export default defineConfig({
   plugins: [
     react(),
     mdx({
-      remarkPlugins: [
-        remarkFrontmatter, // parses YAML frontmatter
-        [remarkMdxFrontmatter, { name: "frontmatter" }], // makes it accessible
-      ],
+      remarkPlugins: [remarkFrontmatter, [remarkMdxFrontmatter, { name: "frontmatter" }]],
     }),
   ],
 });
