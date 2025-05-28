@@ -186,7 +186,7 @@ const About = () => {
           <br />
           <br />
           <Link
-            href="https://www.linkedin.com/in/youssefmalek04/"
+            href="https://www.linkedin.com/in/youssef-momalek/"
             fontWeight="bold"
             color={highlight}
             _hover={{ textDecoration: "underline" }}
