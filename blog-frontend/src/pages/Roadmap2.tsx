@@ -56,7 +56,7 @@ export default function Roadmap() {
 
   return (
     <div style={{ width: "70%", height: "85vh", padding: "1rem", paddingTop: "2rem", margin: "0 auto", position: "relative" }}>
-      <h2 style={{ fontSize: "1.75rem", color: "#cc2277", marginBottom: "1rem" }}>🧠 My AI Learning Roadmap</h2>
+      <h2 style={{ fontSize: "1.75rem", color: "#cc2277", marginBottom: "1rem" }}>My AI Learning Roadmap</h2>
 
       <ReactFlow
         nodes={nodes}
@@ -87,8 +87,8 @@ export default function Roadmap() {
           }}
         >
           <strong>{selectedNode.data.label}</strong>
-          <p style={{ margin: "8px 0" }}>📅 Deadline: {selectedNode.data.deadline}</p>
-          <p style={{ marginBottom: 4 }}>📚 Resources:</p>
+          <p style={{ margin: "8px 0" }}>Deadline: {selectedNode.data.deadline}</p>
+          <p style={{ marginBottom: 4 }}>Resources:</p>
           <ul style={{ paddingLeft: 18, margin: 0 }}>
             {selectedNode.data.resources.map((r, i) => (
               <li key={i}>{r}</li>
@@ -100,7 +100,6 @@ export default function Roadmap() {
   );
 }
 
-// Helper function to get the status of a node by ID (for border color)
 function getNodeStatus(id: string): NodeStatus {
   const found = nodeData.find((n) => n[0] === id);
   return found ? found[4] : "notStarted";

@@ -14,9 +14,19 @@ const About = () => {
   const highlight = "#cc2277";
 
   return (
-    <Flex w="90vw" mx="auto" gap={16} align="flex-start" py={12} bg={bg} color={color}>
+    <Flex
+      direction={{ base: "column", md: "row" }}
+      w="90vw"
+      mx="auto"
+      gap={12}
+      align="flex-start"
+      py={12}
+      px={{ base: 4, md: 0 }}
+      bg={bg}
+      color={color}
+    >
       {/* Left Scrollable Content */}
-      <Box w="60%">
+      <Box w={{ base: "100%", md: "60%" }}>
         <Heading as="h1" size="sm" mb={8} color={highlight}>
           About Found in the Loop
         </Heading>
@@ -29,7 +39,7 @@ const About = () => {
                 <>
                   I made this blog because I couldn’t find anything like it. And what exactly is this you may ask, real advice from someone
                   actually walking the same path, not just recycling hype. It’s about <strong>documenting my learning journey</strong> and
-                  inviting others to <strong>learn and grow with me</strong> . I post what I’m reading, studying, and reflecting on.
+                  inviting others to <strong>learn and grow with me</strong>. I post what I’m reading, studying, and reflecting on.
                   <br />
                   <br />I <strong>hate gatekeeping</strong>, and I genuinely believe the future, especially here in <strong>Egypt</strong>,
                   belongs to those who keep their skills <strong>sharp</strong> and stay <strong>focused</strong>. I once heard, “It’s
@@ -138,30 +148,38 @@ const About = () => {
       </Box>
 
       {/* Right Sidebar with Photo and Intro */}
-      <Box w="30%" position="sticky" top="100px" alignSelf="flex-start">
-        <Image src="My-Photo.png" alt="Youssef Malek" borderRadius="full" boxSize="140px" objectFit="cover" mx="auto" mb={4} />
+      <Box
+        w={{ base: "100%", md: "30%" }}
+        position={{ base: "static", md: "sticky" }}
+        top="100px"
+        alignSelf={{ base: "center", md: "flex-start" }}
+        textAlign={{ base: "center", md: "left" }}
+      >
+        <Image
+          src="My-Photo.png"
+          alt="Youssef Malek"
+          borderRadius="full"
+          boxSize={{ base: "100px", md: "140px" }}
+          objectFit="cover"
+          mx="auto"
+          mb={4}
+        />
 
-        <Text mt={4} fontSize="md" textAlign="center" color={secondary}>
-          I’m a senior computer engineering student at
-          {/* GUC link */}
+        <Text mt={4} fontSize="md" color={secondary}>
+          I’m a senior computer engineering student at{" "}
           <Link
             href="https://www.guc.edu.eg/"
             display="inline-flex"
             alignItems="center"
             fontWeight="bold"
             color={highlight}
-            gap={1} // nice, responsive spacing
-            lineHeight="1" // prevents extra line-box wiggle
+            gap={1}
+            lineHeight="1"
           >
-            <Image
-              src="/guc-image.png"
-              alt="GUC"
-              boxSize="1.1em" // scales with the font size
-              objectFit="contain"
-            />
+            <Image src="/guc-image.png" alt="GUC" boxSize="1.1em" objectFit="contain" />
             <Text as="span">German University in Cairo</Text>
           </Link>
-          , currently working as a <strong>Software Engineering Intern</strong> at {/* Procore link */}
+          , currently working as a <strong>Software Engineering Intern</strong> at{" "}
           <Link
             href="https://www.procore.com/"
             display="inline-flex"
