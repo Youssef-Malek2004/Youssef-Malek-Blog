@@ -110,12 +110,7 @@ const About = () => {
                   newsletter.
                   <br />
                   <br />
-                  <ChakraRouterLink
-                    to="/blog"
-                    fontWeight="bold"
-                    color={highlight}
-                    _hover={{ textDecoration: "underline", color: "blue.400" }}
-                  >
+                  <ChakraRouterLink to="/" fontWeight="bold" color={highlight} _hover={{ textDecoration: "underline", color: "blue.400" }}>
                     Okay, that’s enough about me. Let’s get into it! (psst, this is a link to the blog)
                   </ChakraRouterLink>
                 </>
