@@ -25,6 +25,72 @@ const About = () => {
       bg={bg}
       color={color}
     >
+      {/* Right Sidebar with Photo and Intro */}
+      <Box
+        w={{ base: "100%", md: "30%" }}
+        position={{ base: "static", md: "sticky" }}
+        top="100px"
+        alignSelf={{ base: "center", md: "flex-start" }}
+        textAlign={{ base: "center", md: "left" }}
+      >
+        <Image
+          src="My-Photo.png"
+          alt="Youssef Malek"
+          borderRadius="full"
+          boxSize={{ base: "100px", md: "140px" }}
+          objectFit="cover"
+          mx="auto"
+          mb={4}
+        />
+
+        <Text mt={4} fontSize="md" color={secondary}>
+          I’m a senior computer engineering student at{" "}
+          <Link
+            href="https://www.guc.edu.eg/"
+            display="inline-flex"
+            alignItems="center"
+            fontWeight="bold"
+            color={highlight}
+            gap={1}
+            lineHeight="1"
+          >
+            <Image src="/guc-image.png" alt="GUC" boxSize="1.1em" objectFit="contain" />
+            <Text as="span">German University in Cairo</Text>
+          </Link>
+          , currently working as a <strong>Software Engineering Intern</strong> at{" "}
+          <Link
+            href="https://www.procore.com/"
+            display="inline-flex"
+            alignItems="center"
+            fontWeight="bold"
+            color={highlight}
+            gap={1}
+            lineHeight="1"
+          >
+            <Image src="/procore-image.png" alt="Procore" boxSize="1.1em" objectFit="contain" />
+            <Text as="span">Procore</Text>
+          </Link>
+          .
+          <br />
+          <br />
+          I’m obsessed with the <strong>math behind ML and AI</strong>. Ever since I saw <strong>Jarvis</strong> in Iron Man, I knew{" "}
+          <strong>AGI</strong> was the future. Honestly for me that is both exciting and kinda terrifying haha.
+          <br />
+          <br />
+          This blog’s for anyone who’s <strong>curious</strong>, <strong>stuck</strong>, or just needs something <strong>real</strong>. No
+          AI slop. No BS. Just <strong>authentic human content</strong> from someone in the loop with you.
+          <br />
+          <br />
+          <Link
+            href="https://www.linkedin.com/in/youssef-momalek/"
+            fontWeight="bold"
+            color={highlight}
+            _hover={{ textDecoration: "underline" }}
+          >
+            🔗 Connect with me on LinkedIn
+          </Link>
+        </Text>
+      </Box>
       {/* Left Scrollable Content */}
       <Box w={{ base: "100%", md: "60%" }}>
         <Heading as="h1" size="sm" mb={8} color={highlight}>
@@ -145,73 +211,6 @@ const About = () => {
             </MotionBox>
           ))}
         </VStack>
-      </Box>
-
-      {/* Right Sidebar with Photo and Intro */}
-      <Box
-        w={{ base: "100%", md: "30%" }}
-        position={{ base: "static", md: "sticky" }}
-        top="100px"
-        alignSelf={{ base: "center", md: "flex-start" }}
-        textAlign={{ base: "center", md: "left" }}
-      >
-        <Image
-          src="My-Photo.png"
-          alt="Youssef Malek"
-          borderRadius="full"
-          boxSize={{ base: "100px", md: "140px" }}
-          objectFit="cover"
-          mx="auto"
-          mb={4}
-        />
-
-        <Text mt={4} fontSize="md" color={secondary}>
-          I’m a senior computer engineering student at{" "}
-          <Link
-            href="https://www.guc.edu.eg/"
-            display="inline-flex"
-            alignItems="center"
-            fontWeight="bold"
-            color={highlight}
-            gap={1}
-            lineHeight="1"
-          >
-            <Image src="/guc-image.png" alt="GUC" boxSize="1.1em" objectFit="contain" />
-            <Text as="span">German University in Cairo</Text>
-          </Link>
-          , currently working as a <strong>Software Engineering Intern</strong> at{" "}
-          <Link
-            href="https://www.procore.com/"
-            display="inline-flex"
-            alignItems="center"
-            fontWeight="bold"
-            color={highlight}
-            gap={1}
-            lineHeight="1"
-          >
-            <Image src="/procore-image.png" alt="Procore" boxSize="1.1em" objectFit="contain" />
-            <Text as="span">Procore</Text>
-          </Link>
-          .
-          <br />
-          <br />
-          I’m obsessed with the <strong>math behind ML and AI</strong>. Ever since I saw <strong>Jarvis</strong> in Iron Man, I knew{" "}
-          <strong>AGI</strong> was the future. Honestly for me that is both exciting and kinda terrifying haha.
-          <br />
-          <br />
-          This blog’s for anyone who’s <strong>curious</strong>, <strong>stuck</strong>, or just needs something <strong>real</strong>. No
-          AI slop. No BS. Just <strong>authentic human content</strong> from someone in the loop with you.
-          <br />
-          <br />
-          <Link
-            href="https://www.linkedin.com/in/youssef-momalek/"
-            fontWeight="bold"
-            color={highlight}
-            _hover={{ textDecoration: "underline" }}
-          >
-            🔗 Connect with me on LinkedIn
-          </Link>
-        </Text>
       </Box>
     </Flex>
   );

@@ -6,6 +6,20 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import FoundInLoopIcon from "./ui/FoundInLoopIcon";
 import { useHoverMulti } from "../hooks/UseHover";
 import { useLocation } from "react-router-dom";
+import {
+  Drawer,
+  DrawerBackdrop,
+  DrawerBody,
+  DrawerCloseTrigger,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerPositioner,
+  DrawerTitle,
+} from "@chakra-ui/react";
+import { FaBars } from "react-icons/fa";
+import { useBreakpointValue } from "@chakra-ui/react";
+import { useState } from "react";
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -27,7 +41,7 @@ const Navbar = () => {
           to={to}
           fontWeight={isActive ? "bold" : 500}
           color={isActive ? navHover : navColor}
-          textDecoration={isActive ? "none" : "none"}
+          textDecoration={isActive ? "underline" : "none"}
           _hover={{ color: navHover }}
         >
           {children}
@@ -45,6 +59,9 @@ const Navbar = () => {
       </Box>
     );
   };
+
+  const isMobile = useBreakpointValue({ base: true, md: false });
+  const [open, setOpen] = useState(false);
 
   return (
     <Box
@@ -65,65 +82,116 @@ const Navbar = () => {
       border="none"
       className="noselect"
     >
-      <Flex align="center" justify="space-between" w="100%">
-        {/* Logo & Title */}
-        <ChakraRouterLink
-          as={RouterLink}
-          to="/"
-          fontWeight="bold"
-          fontSize="xl"
-          color={navColor}
-          textDecoration="none"
-          mr={8}
-          display="flex"
-          alignItems="center"
-        >
-          <Box
-            as="span"
-            ref={hoverRefs[0]}
-            mr={2}
-            fontSize="2xl"
+      {isMobile && (
+        <Drawer.Root open={open} onOpenChange={({ open }) => setOpen(open)}>
+          <Drawer.Trigger asChild>
+            <IconButton
+              aria-label="Open menu"
+              variant="ghost"
+              size="lg"
+              ml={2}
+              bg={buttonBg}
+              color={buttonColor}
+              _hover={{ bg: buttonHoverBg }}
+            >
+              <FaBars />
+            </IconButton>
+          </Drawer.Trigger>
+          <DrawerBackdrop />
+          <DrawerPositioner>
+            <DrawerContent>
+              <DrawerCloseTrigger />
+              <DrawerHeader>
+                <DrawerTitle>Menu</DrawerTitle>
+              </DrawerHeader>
+              <DrawerBody display="flex" flexDirection="column" gap={4}>
+                <ChakraRouterLink as={RouterLink} to="/" onClick={() => setOpen(false)}>
+                  Blog
+                </ChakraRouterLink>
+                <ChakraRouterLink as={RouterLink} to="/about" onClick={() => setOpen(false)}>
+                  About
+                </ChakraRouterLink>
+                <ChakraRouterLink as={RouterLink} to="/roadmap" onClick={() => setOpen(false)}>
+                  Roadmap
+                </ChakraRouterLink>
+                <ChakraRouterLink as={RouterLink} to="/subscribe" onClick={() => setOpen(false)}>
+                  Subscribe
+                </ChakraRouterLink>
+                <ChakraRouterLink as={RouterLink} to="/faqs" onClick={() => setOpen(false)}>
+                  FAQs
+                </ChakraRouterLink>
+              </DrawerBody>
+              <DrawerFooter>
+                <Box fontSize="sm" color="gray.500">
+                  Made with ❤️
+                </Box>
+              </DrawerFooter>
+            </DrawerContent>
+          </DrawerPositioner>
+        </Drawer.Root>
+      )}
+
+      {!isMobile && (
+        <Flex align="center" justify="space-between" w="100%">
+          {/* Logo & Title */}
+          <ChakraRouterLink
+            as={RouterLink}
+            to="/"
+            fontWeight="bold"
+            fontSize="xl"
+            color={navColor}
+            textDecoration="none"
+            mr={8}
             display="flex"
             alignItems="center"
-            color={navColor}
-            transition="transform 0.6s ease"
-            transform={isHovered ? "rotate(360deg)" : "none"}
-            cursor="pointer"
           >
-            <FoundInLoopIcon width={50} height={50} />
-          </Box>
+            <Box
+              as="span"
+              ref={hoverRefs[0]}
+              mr={2}
+              fontSize="2xl"
+              display="flex"
+              alignItems="center"
+              color={navColor}
+              transition="transform 0.6s ease"
+              transform={isHovered ? "rotate(360deg)" : "none"}
+              cursor="pointer"
+            >
+              <FoundInLoopIcon width={50} height={50} />
+            </Box>
 
-          <Box ref={hoverRefs[1]} cursor="pointer">
-            Found in the Loop
-          </Box>
-        </ChakraRouterLink>
+            <Box ref={hoverRefs[1]} cursor="pointer">
+              Found in the Loop
+            </Box>
+          </ChakraRouterLink>
 
-        {/* Navigation Links */}
-        <Flex gap={6}>
-          <NavItem to="/">Blog</NavItem>
-          <NavItem to="/about">About</NavItem>
-          <NavItem to="/roadmap">Roadmap & Resources</NavItem>
-          <NavItem to="/subscribe">Subscribe</NavItem>
-          <NavItem to="/faqs">FAQs</NavItem>
+          {/* Navigation Links */}
+          <Flex gap={6}>
+            <NavItem to="/">Blog</NavItem>
+            <NavItem to="/about">About</NavItem>
+            <NavItem to="/roadmap">Roadmap</NavItem>
+            <NavItem to="/subscribe">Subscribe</NavItem>
+            <NavItem to="/faqs">FAQs</NavItem>
+          </Flex>
+
+          {/* Theme Toggle */}
+          <IconButton
+            aria-label="Toggle color mode"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            variant="ghost"
+            size="lg"
+            ml={4}
+            bg={buttonBg}
+            color={buttonColor}
+            _hover={{ bg: buttonHoverBg }}
+            _focus={{ outline: "none", boxShadow: "none" }}
+            transition="background 0.2s, color 0.2s"
+            userSelect="none"
+          >
+            {theme === "light" ? <FaSun /> : <FaMoon />}
+          </IconButton>
         </Flex>
-
-        {/* Theme Toggle */}
-        <IconButton
-          aria-label="Toggle color mode"
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          variant="ghost"
-          size="lg"
-          ml={4}
-          bg={buttonBg}
-          color={buttonColor}
-          _hover={{ bg: buttonHoverBg }}
-          _focus={{ outline: "none", boxShadow: "none" }}
-          transition="background 0.2s, color 0.2s"
-          userSelect="none"
-        >
-          {theme === "light" ? <FaSun /> : <FaMoon />}
-        </IconButton>
-      </Flex>
+      )}
     </Box>
   );
 };
