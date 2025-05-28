@@ -67,7 +67,7 @@ const Navbar = () => {
     <Box
       as="nav"
       w="100vw"
-      maxHeight="5vw"
+      maxHeight="20vw"
       px={4}
       py={2}
       mb={0}
@@ -83,66 +83,103 @@ const Navbar = () => {
       className="noselect"
     >
       {isMobile && (
-        <Drawer.Root open={open} onOpenChange={({ open }) => setOpen(open)} size="sm">
-          <Drawer.Trigger asChild>
-            <IconButton
-              aria-label="Open menu"
-              variant="ghost"
-              size="lg"
-              ml={2}
-              bg={buttonBg}
-              color={buttonColor}
-              _hover={{ bg: buttonHoverBg }}
+        <>
+          <Drawer.Root open={open} onOpenChange={({ open }) => setOpen(open)} size="sm">
+            {/* Sticky mobile navbar header */}
+            <Box
+              w="100%"
+              px={4}
+              py={2}
+              position="sticky"
+              top={0}
+              zIndex={11}
+              backdropFilter="blur(10px)"
+              bg={theme === "dark" ? "rgba(26, 32, 44, 0.0)" : "rgba(255, 255, 255, 0.0)"}
+              transition="background 0.2s, color 0.2s"
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
             >
-              <FaBars />
-            </IconButton>
-          </Drawer.Trigger>
-          <DrawerBackdrop />
-          <DrawerPositioner>
-            <DrawerContent>
-              <DrawerCloseTrigger />
-              <DrawerHeader>
-                <DrawerTitle>Menu</DrawerTitle>
-              </DrawerHeader>
-              <DrawerBody display="flex" flexDirection="column" gap={4}>
-                <ChakraRouterLink as={RouterLink} to="/" onClick={() => setOpen(false)}>
-                  Blog
-                </ChakraRouterLink>
-                <ChakraRouterLink as={RouterLink} to="/about" onClick={() => setOpen(false)}>
-                  About
-                </ChakraRouterLink>
-                <ChakraRouterLink as={RouterLink} to="/roadmap" onClick={() => setOpen(false)}>
-                  Roadmap
-                </ChakraRouterLink>
-                <ChakraRouterLink as={RouterLink} to="/subscribe" onClick={() => setOpen(false)}>
-                  Subscribe
-                </ChakraRouterLink>
-                <ChakraRouterLink as={RouterLink} to="/faqs" onClick={() => setOpen(false)}>
-                  FAQs
-                </ChakraRouterLink>
-                {/* Theme Toggle in Drawer */}
+              {/* Left: Menu Button */}
+              <Drawer.Trigger asChild>
                 <IconButton
-                  aria-label="Toggle color mode"
-                  onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                  aria-label="Open menu"
                   variant="ghost"
                   size="lg"
-                  alignSelf="flex-start"
                   bg={buttonBg}
                   color={buttonColor}
                   _hover={{ bg: buttonHoverBg }}
-                  _focus={{ outline: "none", boxShadow: "none" }}
                 >
-                  Mode {theme === "light" ? <FaSun /> : <FaMoon />}
+                  <FaBars />
                 </IconButton>
-              </DrawerBody>
-              <DrawerFooter>
-                <Box fontSize="sm" color="gray.500">
-                  Made with ❤️
+              </Drawer.Trigger>
+
+              {/* Right: Logo */}
+              <Flex align="center" gap={2}>
+                <Box
+                  as="span"
+                  ref={hoverRefs[0]}
+                  fontSize="2xl"
+                  display="flex"
+                  alignItems="center"
+                  color={navColor}
+                  transition="transform 0.6s ease"
+                  cursor="pointer"
+                >
+                  <FoundInLoopIcon width={50} height={50} />
                 </Box>
-              </DrawerFooter>
-            </DrawerContent>
-          </DrawerPositioner>
-        </Drawer.Root>
+                <Box ref={hoverRefs[1]} cursor="pointer" fontWeight="bold" fontSize="lg" color={navColor}>
+                  Found in the Loop
+                </Box>
+              </Flex>
+            </Box>
+            <DrawerBackdrop />
+            <DrawerPositioner>
+              <DrawerContent>
+                <DrawerCloseTrigger />
+                <DrawerHeader>
+                  <DrawerTitle>Menu</DrawerTitle>
+                </DrawerHeader>
+                <DrawerBody display="flex" flexDirection="column" gap={4}>
+                  <ChakraRouterLink as={RouterLink} to="/" onClick={() => setOpen(false)}>
+                    Blog
+                  </ChakraRouterLink>
+                  <ChakraRouterLink as={RouterLink} to="/about" onClick={() => setOpen(false)}>
+                    About
+                  </ChakraRouterLink>
+                  <ChakraRouterLink as={RouterLink} to="/roadmap" onClick={() => setOpen(false)}>
+                    Roadmap
+                  </ChakraRouterLink>
+                  <ChakraRouterLink as={RouterLink} to="/subscribe" onClick={() => setOpen(false)}>
+                    Subscribe
+                  </ChakraRouterLink>
+                  <ChakraRouterLink as={RouterLink} to="/faqs" onClick={() => setOpen(false)}>
+                    FAQs
+                  </ChakraRouterLink>
+
+                  <IconButton
+                    aria-label="Toggle color mode"
+                    onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                    variant="ghost"
+                    size="lg"
+                    alignSelf="flex-start"
+                    bg={buttonBg}
+                    color={buttonColor}
+                    _hover={{ bg: buttonHoverBg }}
+                    _focus={{ outline: "none", boxShadow: "none" }}
+                  >
+                    Mode {theme === "light" ? <FaSun /> : <FaMoon />}
+                  </IconButton>
+                </DrawerBody>
+                <DrawerFooter>
+                  <Box fontSize="sm" color="gray.500">
+                    Made with ❤️
+                  </Box>
+                </DrawerFooter>
+              </DrawerContent>
+            </DrawerPositioner>
+          </Drawer.Root>
+        </>
       )}
 
       {!isMobile && (
