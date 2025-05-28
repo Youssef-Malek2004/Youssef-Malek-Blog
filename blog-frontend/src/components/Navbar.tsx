@@ -41,7 +41,7 @@ const Navbar = () => {
           to={to}
           fontWeight={isActive ? "bold" : 500}
           color={isActive ? navHover : navColor}
-          textDecoration={isActive ? "underline" : "none"}
+          textDecoration={isActive ? "none" : "none"}
           _hover={{ color: navHover }}
         >
           {children}
@@ -120,6 +120,20 @@ const Navbar = () => {
                 <ChakraRouterLink as={RouterLink} to="/faqs" onClick={() => setOpen(false)}>
                   FAQs
                 </ChakraRouterLink>
+                {/* Theme Toggle in Drawer */}
+                <IconButton
+                  aria-label="Toggle color mode"
+                  onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                  variant="ghost"
+                  size="lg"
+                  alignSelf="flex-start"
+                  bg={buttonBg}
+                  color={buttonColor}
+                  _hover={{ bg: buttonHoverBg }}
+                  _focus={{ outline: "none", boxShadow: "none" }}
+                >
+                  Mode {theme === "light" ? <FaSun /> : <FaMoon />}
+                </IconButton>
               </DrawerBody>
               <DrawerFooter>
                 <Box fontSize="sm" color="gray.500">
