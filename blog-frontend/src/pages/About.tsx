@@ -139,7 +139,7 @@ const About = () => {
 
       {/* Right Sidebar with Photo and Intro */}
       <Box w="30%" position="sticky" top="100px" alignSelf="flex-start">
-        <Image src="/src/assets/My-Photo.png" alt="Youssef Malek" borderRadius="full" boxSize="140px" objectFit="cover" mx="auto" mb={4} />
+        <Image src="My-Photo.png" alt="Youssef Malek" borderRadius="full" boxSize="140px" objectFit="cover" mx="auto" mb={4} />
 
         <Text mt={4} fontSize="md" textAlign="center" color={secondary}>
           I’m a senior computer engineering student at
@@ -154,7 +154,7 @@ const About = () => {
             lineHeight="1" // prevents extra line-box wiggle
           >
             <Image
-              src="/src/assets/guc-image.png"
+              src="/guc-image.png"
               alt="GUC"
               boxSize="1.1em" // scales with the font size
               objectFit="contain"
@@ -171,7 +171,7 @@ const About = () => {
             gap={1}
             lineHeight="1"
           >
-            <Image src="/src/assets/procore-image.png" alt="Procore" boxSize="1.1em" objectFit="contain" />
+            <Image src="/procore-image.png" alt="Procore" boxSize="1.1em" objectFit="contain" />
             <Text as="span">Procore</Text>
           </Link>
           .
