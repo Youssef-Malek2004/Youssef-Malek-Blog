@@ -83,7 +83,7 @@ const Navbar = () => {
       className="noselect"
     >
       {isMobile && (
-        <Drawer.Root open={open} onOpenChange={({ open }) => setOpen(open)}>
+        <Drawer.Root open={open} onOpenChange={({ open }) => setOpen(open)} size="sm">
           <Drawer.Trigger asChild>
             <IconButton
               aria-label="Open menu"
