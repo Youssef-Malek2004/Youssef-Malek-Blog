@@ -178,7 +178,7 @@ const About = () => {
                   First and most importantly, <strong>believe in yourself</strong>. No one else will. That belief is everything.
                   <br />
                   <br />
-                  Don’t just read this blog, think how you can use what I’m sharing to <strong>grow</strong>, <strong>learn</strong>, and{" "}
+                  Don’t just read this blog. Think how you can use what I’m sharing to <strong>grow</strong>, <strong>learn</strong>, and{" "}
                   <strong>improve your own life</strong>.
                   <br />
                   <br />
