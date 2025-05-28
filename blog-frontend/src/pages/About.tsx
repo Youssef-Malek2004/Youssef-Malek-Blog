@@ -44,7 +44,7 @@ const About = () => {
         />
 
         <Text mt={4} fontSize="md" color={secondary}>
-          I’m a senior computer engineering student at{" "}
+          Hi there! I am <strong>Youssef Malek</strong>, a senior computer engineering student at{" "}
           <Link
             href="https://www.guc.edu.eg/"
             display="inline-flex"
