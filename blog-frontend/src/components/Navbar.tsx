@@ -148,7 +148,7 @@ const Navbar = () => {
                     About
                   </ChakraRouterLink>
                   <ChakraRouterLink as={RouterLink} to="/roadmap" onClick={() => setOpen(false)}>
-                    Roadmap
+                    Roadmap & Resources
                   </ChakraRouterLink>
                   <ChakraRouterLink as={RouterLink} to="/subscribe" onClick={() => setOpen(false)}>
                     Subscribe
@@ -220,7 +220,7 @@ const Navbar = () => {
           <Flex gap={6}>
             <NavItem to="/">Blog</NavItem>
             <NavItem to="/about">About</NavItem>
-            <NavItem to="/roadmap">Roadmap</NavItem>
+            <NavItem to="/roadmap">Roadmap & Resources</NavItem>
             <NavItem to="/subscribe">Subscribe</NavItem>
             <NavItem to="/faqs">FAQs</NavItem>
           </Flex>
