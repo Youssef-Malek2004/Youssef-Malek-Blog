@@ -1,6 +1,7 @@
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import About from "./pages/About";
+import Roadmap from "./pages/Roadmap2";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
 import { Routes, Route } from "react-router-dom";
@@ -30,20 +31,6 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   );
 };
 
-const Roadmap = () => {
-  const { theme } = useTheme();
-  return (
-    <Box
-      py={16}
-      textAlign="center"
-      fontSize="2xl"
-      bg={theme === "dark" ? "gray.900" : "white"}
-      color={theme === "dark" ? "white" : "gray.900"}
-    >
-      Roadmap
-    </Box>
-  );
-};
 const Subscribe = () => {
   const { theme } = useTheme();
   return (
