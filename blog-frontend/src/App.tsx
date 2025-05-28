@@ -1,6 +1,6 @@
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Home from "./pages/Home";
+import About from "./pages/About";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
 import { Routes, Route } from "react-router-dom";
@@ -30,20 +30,6 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   );
 };
 
-const About = () => {
-  const { theme } = useTheme();
-  return (
-    <Box
-      py={16}
-      textAlign="center"
-      fontSize="2xl"
-      bg={theme === "dark" ? "gray.900" : "white"}
-      color={theme === "dark" ? "white" : "gray.900"}
-    >
-      About Found in the Loop
-    </Box>
-  );
-};
 const Roadmap = () => {
   const { theme } = useTheme();
   return (
@@ -92,8 +78,7 @@ function App() {
     <ThemeProvider attribute="class">
       <AppContainer>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/blog" element={<BlogList />} />
+          <Route path="/" element={<BlogList />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/about" element={<About />} />
           <Route path="/roadmap" element={<Roadmap />} />

@@ -3,6 +3,9 @@ import { ChakraRouterLink } from "../components/ChakraRouterLink";
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useTheme } from "next-themes";
+import { motion } from "framer-motion";
+
+const MotionBox = motion(Box);
 
 interface BlogPostMeta {
   slug: string;
@@ -65,7 +68,12 @@ const BlogList = () => {
 
         <VStack align="stretch" spaceY={10}>
           {posts.map((post, index) => (
-            <Box key={post.slug}>
+            <MotionBox
+              key={post.slug}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
               <ChakraRouterLink as={RouterLink} to={`/blog/${post.slug}`} _hover={{ textDecoration: "none" }}>
                 <Heading
                   as="h2"
@@ -108,7 +116,7 @@ const BlogList = () => {
                   {post.date}
                 </Text>
               </Flex>
-            </Box>
+            </MotionBox>
           ))}
         </VStack>
       </Box>

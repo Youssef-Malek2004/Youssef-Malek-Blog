@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { FaMoon, FaSun } from "react-icons/fa";
 import FoundInLoopIcon from "./ui/FoundInLoopIcon";
 import { useHoverMulti } from "../hooks/UseHover";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -16,9 +17,19 @@ const Navbar = () => {
   const [hoverRefs, isHovered] = useHoverMulti();
 
   const NavItem = ({ to, children }: { to: string; children: React.ReactNode }) => {
+    const location = useLocation();
+    const isActive = location.pathname === to;
+
     return (
       <Box position="relative" display="inline-block" role="group">
-        <ChakraRouterLink as={RouterLink} to={to} fontWeight={500} color={navColor} textDecoration="none" _hover={{ color: navHover }}>
+        <ChakraRouterLink
+          as={RouterLink}
+          to={to}
+          fontWeight={isActive ? "bold" : 500}
+          color={isActive ? navHover : navColor}
+          textDecoration={isActive ? "none" : "none"}
+          _hover={{ color: navHover }}
+        >
           {children}
         </ChakraRouterLink>
         <Box
@@ -26,7 +37,7 @@ const Navbar = () => {
           bottom={-1}
           left={0}
           height="2px"
-          width="0%"
+          width={isActive ? "100%" : "0%"}
           bg={navHover}
           transition="width 0.3s ease-in-out"
           _groupHover={{ width: "100%" }}
@@ -89,7 +100,7 @@ const Navbar = () => {
 
         {/* Navigation Links */}
         <Flex gap={6}>
-          <NavItem to="/blog">Blog</NavItem>
+          <NavItem to="/">Blog</NavItem>
           <NavItem to="/about">About</NavItem>
           <NavItem to="/roadmap">Roadmap</NavItem>
           <NavItem to="/subscribe">Subscribe</NavItem>
