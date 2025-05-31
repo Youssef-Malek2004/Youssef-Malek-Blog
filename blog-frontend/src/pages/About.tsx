@@ -144,11 +144,6 @@ const About = () => {
                   <strong>hate gatekeeping</strong> as it holds too many people back and also all I see nowadays on YouTube and LinkedIn is
                   some wannabe AI creators spreading hype and BS thus I've made it my mission to try my best to counteract their negative
                   effects.
-                  <br />
-                  <br />
-                  Especially here in <strong>Egypt</strong>, I think the only way forward is if more of us take our learning seriously and
-                  keep our skills <strong>sharp</strong>. AI is coming fast, and those who don’t <strong>master their craft</strong> will be
-                  left behind.
                 </>
               ),
             },
