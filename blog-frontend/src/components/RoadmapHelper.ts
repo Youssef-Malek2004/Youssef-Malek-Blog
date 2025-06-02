@@ -7,6 +7,7 @@ export type NodeMeta = {
   label: string;
   resources: string[];
   deadline: string;
+  description?: string;
 };
 
 const baseNodeStyle: React.CSSProperties = {
@@ -27,14 +28,15 @@ export const createNode = (
   status: NodeStatus,
   isDark: boolean,
   resources: string[],
-  deadline: string
+  deadline: string,
+  description?: string
 ): Node<NodeMeta> => {
   const borderColor = status === "done" ? "#38A169" : status === "inProgress" ? "#ECC94B" : "#E53E3E";
   const bgColor = isDark ? "#1A202C" : status === "inProgress" ? "#FFFFE0" : "white";
 
   return {
     id,
-    data: { label, resources, deadline },
+    data: { label, resources, deadline, description },
     position: { x, y },
     type: "default",
     style: {

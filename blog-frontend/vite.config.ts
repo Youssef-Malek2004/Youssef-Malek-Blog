@@ -6,6 +6,10 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 
 export default defineConfig({
+  server: {
+    host: "frontend.youssefmalek.blog",
+    port: 5173,
+  },
   plugins: [
     react(),
     mdx({
