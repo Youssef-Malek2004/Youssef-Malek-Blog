@@ -1,6 +1,6 @@
 import { useState } from "react";
 import About from "./pages/About";
-import Roadmap from "./pages/Roadmap2";
+import Roadmap from "./pages/Roadmap";
 import BlogList from "./pages/BlogList";
 import BlogPost from "./pages/BlogPost";
 import SubscribeModal from "./pages/Subscribe";

@@ -3,7 +3,7 @@ import { ChakraRouterLink } from "../components/ChakraRouterLink";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 const About = () => {
   const { theme } = useTheme();
