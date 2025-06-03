@@ -21,7 +21,7 @@ import { FaBars } from "react-icons/fa";
 import { useBreakpointValue } from "@chakra-ui/react";
 import { useState } from "react";
 
-const Navbar = () => {
+const Navbar = ({ onSubscribeClick, isSubscribeOpen = false }: { onSubscribeClick?: () => void; isSubscribeOpen?: boolean }) => {
   const { theme, setTheme } = useTheme();
   const navColor = theme === "dark" ? "white" : "gray.900";
   const navHover = theme === "dark" ? "blue.300" : "blue.500";
@@ -30,15 +30,26 @@ const Navbar = () => {
   const buttonHoverBg = theme === "dark" ? "gray.700" : "gray.100";
   const [hoverRefs, isHovered] = useHoverMulti();
 
-  const NavItem = ({ to, children }: { to: string; children: React.ReactNode }) => {
+  const NavItem = ({
+    to,
+    children,
+    onClick,
+  }: {
+    to: string;
+    children: React.ReactNode;
+    onClick?: (e: React.MouseEvent<unknown>) => void;
+  }) => {
     const location = useLocation();
-    const isActive = location.pathname === to;
+    const isPathActive = location.pathname === to;
+    const isSubscribe = to === "#";
+    const isActive = isSubscribe ? isSubscribeOpen : isPathActive && !isSubscribeOpen;
 
     return (
       <Box position="relative" display="inline-block" role="group">
         <ChakraRouterLink
           as={RouterLink}
           to={to}
+          onClick={onClick}
           fontWeight={isActive ? "bold" : 500}
           color={isActive ? navHover : navColor}
           textDecoration={isActive ? "none" : "none"}
@@ -150,7 +161,14 @@ const Navbar = () => {
                   <ChakraRouterLink as={RouterLink} to="/roadmap" onClick={() => setOpen(false)}>
                     Roadmap & Resources
                   </ChakraRouterLink>
-                  <ChakraRouterLink as={RouterLink} to="/subscribe" onClick={() => setOpen(false)}>
+                  <ChakraRouterLink
+                    as={RouterLink}
+                    to="#"
+                    onClick={() => {
+                      setOpen(false);
+                      onSubscribeClick?.();
+                    }}
+                  >
                     Subscribe
                   </ChakraRouterLink>
                   <ChakraRouterLink as={RouterLink} to="/faqs" onClick={() => setOpen(false)}>
@@ -221,7 +239,16 @@ const Navbar = () => {
             <NavItem to="/">Blog</NavItem>
             <NavItem to="/about">About</NavItem>
             <NavItem to="/roadmap">Roadmap & Resources</NavItem>
-            <NavItem to="/subscribe">Subscribe</NavItem>
+            <NavItem
+              to="#"
+              onClick={(e) => {
+                e.preventDefault();
+                onSubscribeClick?.();
+              }}
+            >
+              Subscribe
+            </NavItem>
+
             <NavItem to="/faqs">FAQs</NavItem>
           </Flex>
 
