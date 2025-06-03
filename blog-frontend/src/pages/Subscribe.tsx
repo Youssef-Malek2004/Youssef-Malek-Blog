@@ -48,6 +48,7 @@ const SubscribeModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
     if (!email) return;
     setLoading(true);
     try {
+      console.log(BACKEND_URL);
       const { data } = await axios.get(`${BACKEND_URL}/api/subscribed?email=${email}`);
       if (!data.subscribed) {
         await axios.post(`${BACKEND_URL}/api/subscribe`, { email });
