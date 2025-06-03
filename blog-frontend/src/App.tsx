@@ -13,7 +13,7 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
   return (
     <Box
-      minH="100vh"
+      minHeight="100vh"
       display="flex"
       flexDirection="column"
       bg={theme === "dark" ? "gray.900" : "white"}

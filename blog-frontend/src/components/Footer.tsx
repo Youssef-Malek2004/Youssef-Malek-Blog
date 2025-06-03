@@ -9,9 +9,21 @@ const Footer = () => {
   const bgColor = theme === "dark" ? "gray.900" : "gray.50";
 
   return (
-    <Box as="footer" w="100%" py={6} px={4} borderTop="1px solid" borderColor={borderColor} bg={bgColor} textAlign="center" mt="auto">
-      <Stack spaceY={3}>
-        <Text fontWeight="bold" fontSize="md" color="#cc2277">
+    <Box
+      as="footer"
+      py={5}
+      px={4}
+      borderTop="1px solid"
+      borderColor={borderColor}
+      mt={10}
+      textAlign="center"
+      bg={bgColor}
+      width="100%"
+      maxWidth="100%"
+      transition="all 0.2s"
+    >
+      <Stack spaceY={2}>
+        <Text fontWeight="bold" color="#cc2277" fontSize="md">
           A Youssef Malek Blog — Found in the Loop
         </Text>
 
@@ -23,10 +35,6 @@ const Footer = () => {
           ·{" "}
           <Link href="https://www.linkedin.com/in/youssef-momalek/" color="#cc2277" fontWeight="500">
             LinkedIn
-          </Link>{" "}
-          ·{" "}
-          <Link href="https://github.com/Youssef-Malek2004" color="#cc2277" fontWeight="500">
-            GitHub
           </Link>
         </Text>
 
