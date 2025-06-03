@@ -22,7 +22,7 @@ const AppContainer: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     >
       <Navbar />
 
-      <Box as="main" flex="1" maxW="80vw" w="100%" mx="auto" display="flex" flexDirection="column" py={8}>
+      <Box as="main" flex="1" w="100%" px={4} mx="auto" display="flex" flexDirection="column" py={8}>
         {children}
       </Box>
 
