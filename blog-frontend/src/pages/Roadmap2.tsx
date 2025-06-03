@@ -284,7 +284,7 @@ export default function Roadmap() {
           onMouseOver={(e) => (e.currentTarget.style.color = "#1d4ed8")}
           onMouseOut={(e) => (e.currentTarget.style.color = "#3b82f6")}
         >
-          Go to Resources Section
+          Go to Resources & Reviews Section
         </p>
       </section>
 
