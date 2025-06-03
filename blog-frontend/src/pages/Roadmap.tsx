@@ -231,13 +231,13 @@ export default function Roadmap() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
             gap: "1.5rem",
             textAlign: "left",
             maxWidth: "1100px",
             margin: "0 auto 1.5rem",
             fontSize: "1rem",
-            color: theme === "dark" ? "#e2e8f0" : "#1a202c",
+            color: dark ? "#e2e8f0" : "#1a202c",
             lineHeight: 1.6,
           }}
         >
@@ -473,7 +473,7 @@ export default function Roadmap() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
             gap: "1.25rem",
           }}
         >
