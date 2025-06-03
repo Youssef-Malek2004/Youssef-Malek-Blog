@@ -225,7 +225,7 @@ export default function Roadmap() {
             marginBottom: "1.25rem",
           }}
         >
-          Welcome to My AI Roadmap
+          Welcome to My Roadmap
         </h1>
 
         <div
@@ -332,7 +332,7 @@ export default function Roadmap() {
               textAlign: "center",
             }}
           >
-            My AI Learning Roadmap
+            My Learning Roadmap
           </h2>
 
           <div style={{ width: "100%", height: "calc(100% - 2rem)" }}>
