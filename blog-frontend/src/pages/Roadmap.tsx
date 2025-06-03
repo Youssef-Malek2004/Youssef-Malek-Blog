@@ -232,7 +232,7 @@ export default function Roadmap() {
           style={{
             display: "grid",
             gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-            gap: "1.5rem",
+            gap: isMobile ? "0rem" : "1.5rem",
             textAlign: "left",
             maxWidth: "1100px",
             margin: "0 auto 1.5rem",
