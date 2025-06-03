@@ -1,27 +1,46 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, Link, Stack } from "@chakra-ui/react";
 import { useTheme } from "next-themes";
 
 const Footer = () => {
   const { theme } = useTheme();
+
+  const textColor = theme === "dark" ? "gray.400" : "gray.600";
+  const borderColor = theme === "dark" ? "gray.700" : "gray.200";
+  const bgColor = theme === "dark" ? "gray.900" : "gray.50";
+
   return (
     <Box
       as="footer"
-      py={3}
-      px={2}
+      py={5}
+      px={4}
       borderTop="1px solid"
-      borderColor={theme === "dark" ? "gray.700" : "gray.100"}
-      mt={8}
+      borderColor={borderColor}
+      mt={10}
       textAlign="center"
-      color={theme === "dark" ? "gray.400" : "gray.500"}
-      bg={theme === "dark" ? "gray.900" : "gray.50"}
-      fontSize="sm"
-      borderRadius="0"
+      bg={bgColor}
       w="100vw"
-      left={0}
-      position="relative"
-      transition="background 0.2s, color 0.2s"
+      transition="all 0.2s"
     >
-      <Text>© {new Date().getFullYear()} Found in the Loop. All rights reserved.</Text>
+      <Stack spaceX={2}>
+        <Text fontWeight="bold" color="#cc2277" fontSize="md">
+          A Youssef Malek Blog — Found in the Loop
+        </Text>
+
+        <Text fontSize="sm" color={textColor}>
+          Let’s connect:{" "}
+          <Link href="mailto:youssefmmalek@gmail.com" color="#cc2277" fontWeight="500">
+            youssefmmalek@gmail.com
+          </Link>{" "}
+          ·{" "}
+          <Link href="https://www.linkedin.com/in/youssef-momalek/" color="#cc2277" fontWeight="500">
+            LinkedIn
+          </Link>
+        </Text>
+
+        <Text fontSize="xs" color={textColor}>
+          © {new Date().getFullYear()} All rights reserved.
+        </Text>
+      </Stack>
     </Box>
   );
 };

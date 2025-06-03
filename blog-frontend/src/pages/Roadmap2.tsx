@@ -288,6 +288,26 @@ export default function Roadmap() {
         </p>
       </section>
 
+      <div
+        style={{
+          marginTop: "2rem",
+          textAlign: "center",
+          fontSize: "0.95rem",
+          color: theme === "dark" ? "#e5e7eb" : "#1f2937",
+          lineHeight: 1.6,
+          maxWidth: "800px",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+      >
+        <p>
+          If you’d like to <span style={{ color: "#cc2277", fontWeight: 500 }}>propose changes</span> to my roadmap or share any valuable{" "}
+          <span style={{ color: "#cc2277", fontWeight: 500 }}>resource advice</span> or even recommendations, feel free to send me a
+          personal email. You can find it in the footer.
+        </p>
+        <p style={{ marginTop: "0.5rem" }}>We’re all in the loop, after all 😉</p>
+      </div>
+
       {/* -------- main canvas -------- */}
       <div style={{ padding: "1rem", display: "flex", justifyContent: "center" }}>
         <div
