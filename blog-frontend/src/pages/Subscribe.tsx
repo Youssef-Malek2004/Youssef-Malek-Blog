@@ -109,9 +109,32 @@ const SubscribeModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
 
           <DialogBody px={6} py={4}>
             {subscribed ? (
-              <Text textAlign="center" color="green.400">
-                You’re already subscribed&nbsp;
-              </Text>
+              <div style={{ textAlign: "center" }}>
+                <Text mb={2} color="green.400">
+                  You’re subscribed as <strong>{email}</strong>
+                </Text>
+                <Text
+                  as="button"
+                  onClick={() => {
+                    setSubscribed(false);
+                    localStorage.removeItem("subscribedEmail");
+                    setEmail("");
+                    toast("You’ve been unsubscribed.");
+                  }}
+                  bg={theme === "light" ? "white" : "transparent"}
+                  color="blue.400"
+                  fontSize="sm"
+                  textDecor="underline"
+                  _hover={{
+                    color: "blue.600",
+                    bg: theme === "light" ? "gray.100" : "gray.700",
+                  }}
+                  px={1}
+                  borderRadius="md"
+                >
+                  Unsubscribe
+                </Text>
+              </div>
             ) : (
               <Input
                 placeholder="Enter your email"
@@ -122,6 +145,7 @@ const SubscribeModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
               />
             )}
           </DialogBody>
+
           {!subscribed && (
             <DialogFooter borderTopWidth="1px" borderColor={border} px={6} py={4}>
               <Button
