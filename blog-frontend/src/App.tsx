@@ -29,7 +29,7 @@ function App() {
   const [isSubscribeOpen, setIsSubscribeOpen] = useState(false);
 
   return (
-    <ThemeProvider attribute="class">
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <Routes>
         <Route element={<Layout onSubscribeClick={() => setIsSubscribeOpen(true)} isSubscribeOpen={isSubscribeOpen} />}>
           <Route path="/" element={<BlogList />} />
