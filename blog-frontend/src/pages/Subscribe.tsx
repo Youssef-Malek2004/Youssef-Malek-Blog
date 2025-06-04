@@ -34,6 +34,8 @@ const SubscribeModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   /* restore cached email */
   useEffect(() => {
     const cached = localStorage.getItem("subscribedEmail");
@@ -50,12 +52,15 @@ const SubscribeModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
     try {
       console.log(BACKEND_URL);
       const { data } = await axios.get(`${BACKEND_URL}/api/subscribed?email=${email}`);
+      if (data.subscribed) {
+        toast.info("Already Subsribed!");
+      }
       if (!data.subscribed) {
         await axios.post(`${BACKEND_URL}/api/subscribe`, { email });
+        toast.success("Subscribed successfully!");
       }
       setSubscribed(true);
       localStorage.setItem("subscribedEmail", email);
-      toast.success("Subscribed successfully!");
       setIsOpen(false);
     } catch {
       toast.error("Subscription failed.");
@@ -105,7 +110,7 @@ const SubscribeModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
           <DialogBody px={6} py={4}>
             {subscribed ? (
               <Text textAlign="center" color="green.400">
-                You’re already subscribed&nbsp;✅
+                You’re already subscribed&nbsp;
               </Text>
             ) : (
               <Input
@@ -117,10 +122,19 @@ const SubscribeModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
               />
             )}
           </DialogBody>
-
           {!subscribed && (
             <DialogFooter borderTopWidth="1px" borderColor={border} px={6} py={4}>
-              <Button colorScheme="teal" w="full" loading={loading} onClick={handleSubmit} disabled={!email}>
+              <Button
+                bg={theme === "dark" ? "gray.700" : "gray.200"}
+                color={theme === "dark" ? "white" : "black"}
+                _hover={{
+                  bg: theme === "dark" ? "gray.600" : "gray.300",
+                }}
+                w="full"
+                loading={loading}
+                onClick={handleSubmit}
+                disabled={!isValidEmail(email)}
+              >
                 Subscribe
               </Button>
             </DialogFooter>
