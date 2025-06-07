@@ -73,7 +73,8 @@ const About = () => {
           </Link>
           .
           <br />
-          <br />I became obsessed with the <strong>math behind ML and AI</strong>, ever since I saw <strong>Jarvis</strong> in Iron Man.
+          <br />I became obsessed with the <strong>math behind ML and AI</strong>, ever since I saw <strong>Jarvis</strong> in Iron Man (Not
+          sure if that is lame or cool honestly).
           <br />
           <br />
           This blog’s for anyone who’s <strong>curious</strong>, <strong>stuck</strong>, or just needs something <strong>real</strong>. No
