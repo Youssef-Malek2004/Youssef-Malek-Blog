@@ -24,6 +24,7 @@ const SubscribeModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isUnsubscribing, setIsUnsubscribing] = useState(false);
 
   /* ─────────────────────────────────── colors by theme */
   const { theme } = useTheme();
@@ -113,14 +114,36 @@ const SubscribeModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
                 <Text mb={2} color="green.400">
                   You’re subscribed as <strong>{email}</strong>
                 </Text>
-                <Text
+                <Button
                   as="button"
-                  onClick={() => {
-                    setSubscribed(false);
-                    localStorage.removeItem("subscribedEmail");
-                    setEmail("");
-                    toast("You’ve been unsubscribed.");
+                  onClick={async () => {
+                    setIsUnsubscribing(true);
+                    try {
+                      const response = await axios.post(`${BACKEND_URL}/api/unsubscribe`, { Email: email });
+
+                      toast.success(response.data || "You’ve been unsubscribed.");
+                      setSubscribed(false);
+                      localStorage.removeItem("subscribedEmail");
+                      setEmail("");
+                    } catch (error) {
+                      console.log(error);
+                      if (axios.isAxiosError(error)) {
+                        if (error.response?.status === 404) {
+                          toast.info("You were already unsubscribed.");
+                          setSubscribed(false);
+                          localStorage.removeItem("subscribedEmail");
+                          setEmail("");
+                        } else {
+                          toast.error("Unsubscription failed. Please try again.");
+                        }
+                      } else {
+                        toast.error("An unexpected error occurred.");
+                      }
+                    } finally {
+                      setIsUnsubscribing(false);
+                    }
                   }}
+                  disabled={isUnsubscribing}
                   bg={theme === "light" ? "white" : "transparent"}
                   color="blue.400"
                   fontSize="sm"
@@ -132,8 +155,8 @@ const SubscribeModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (op
                   px={1}
                   borderRadius="md"
                 >
-                  Unsubscribe
-                </Text>
+                  {isUnsubscribing ? "Unsubscribing..." : "Unsubscribe"}
+                </Button>
               </div>
             ) : (
               <Input
