@@ -1,23 +1,39 @@
 import { useParams } from "react-router-dom";
 import { useMemo } from "react";
 import { MDXProvider } from "@mdx-js/react";
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Box, Heading, Text, useBreakpointValue } from "@chakra-ui/react";
 import { useTheme } from "next-themes";
 import RewardChart from "../components/RewardChart";
 import QValueChart from "../components/QValueChart";
 import PolicyChart from "../components/PolicyChart";
 
-const components = {
+import { CodeBlock } from "../components/CodeBlock";
+import type { ComponentProps } from "react";
+
+const mdxComponents = {
+  pre: CodeBlock,
+  code: (p: ComponentProps<"code">) => <code {...p} />,
   RewardChart,
   QValueChart,
   PolicyChart,
 };
 
+/**
+ * BlogPost – renders an MDX post based on the `slug` route param.
+ */
 const BlogPost = () => {
-  const { slug } = useParams<{ slug: string }>();
-  const { theme } = useTheme();
+  /* ─────────────────────── hook setup ─────────────────────── */
+  const { slug = "" } = useParams<{ slug: string }>();
+  const { theme } = useTheme(); // "light" | "dark"
 
-  // Dynamically import the MDX file by slug
+  // manual palette (mirrors SubscribeModal style)
+  const headingColor = theme === "dark" ? "white" : "gray.800";
+  const bodyColor = theme === "dark" ? "gray.200" : "gray.700";
+  const dateColor = theme === "dark" ? "gray.400" : "gray.600";
+  const pageBg = theme === "dark" ? "gray.900" : "white";
+  const maxWidth = useBreakpointValue({ base: "95%", md: "900px" });
+
+  /* ────────────────── fetch MDX component dynamically ────────────────── */
   const Post = useMemo(() => {
     const modules = import.meta.glob("../content/*.mdx", { eager: true });
     const match = Object.entries(modules).find(([path]) => path.endsWith(`${slug}.mdx`));
@@ -26,45 +42,33 @@ const BlogPost = () => {
       : null;
   }, [slug]);
 
-  if (!Post)
+  /* ───────────────────────── 404 fallback ───────────────────────── */
+  if (!Post) {
     return (
-      <Box textAlign="center" mt={16} fontSize="xl">
+      <Box as="main" textAlign="center" mt={24} fontSize="2xl" color={bodyColor} bg={pageBg} minH="100vh">
         Post not found.
       </Box>
     );
+  }
 
-  const title = Post?.frontmatter?.title || slug;
-  const date = Post?.frontmatter?.date;
+  /* ───────────────────────── render post ───────────────────────── */
+  const { frontmatter = {} } = Post;
+  const { title = slug, date } = frontmatter;
 
   return (
-    <Box
-      bg={theme === "dark" ? "gray.900" : "white"}
-      color={theme === "dark" ? "white" : "gray.900"}
-      minH="100vh"
-      pb={16}
-      transition="background 0.2s, color 0.2s"
-    >
-      <Box
-        maxW="3xl"
-        mx="auto"
-        bg={theme === "dark" ? "gray.800" : "white"}
-        borderRadius="2xl"
-        boxShadow="lg"
-        px={{ base: 4, md: 10 }}
-        py={{ base: 8, md: 12 }}
-        mt={12}
-      >
-        <Heading as="h1" size="2xl" mb={2} color={theme === "dark" ? "white" : "gray.800"}>
+    <Box as="article" bg={pageBg} color={bodyColor} minH="100vh" py={{ base: 10, md: 16 }} px={4} transition="background 0.2s, color 0.2s">
+      <Box mx="auto" maxW={maxWidth} lineHeight={1.8}>
+        <Heading as="h1" size="2xl" mb={2} color={headingColor} wordBreak="break-word">
           {title}
         </Heading>
+
         {date && (
-          <Text color={theme === "dark" ? "gray.400" : "gray.500"} fontSize="md" mb={8}>
+          <Text mb={10} fontSize="md" color={dateColor}>
             {date}
           </Text>
         )}
-        <Box fontSize="lg" lineHeight={1.8} color={theme === "dark" ? "gray.200" : "gray.700"}>
-          <MDXProvider components={components}>{Post.default && <Post.default components={components} />}</MDXProvider>
-        </Box>
+
+        <MDXProvider components={mdxComponents}>{Post.default && <Post.default components={mdxComponents} />}</MDXProvider>
       </Box>
     </Box>
   );

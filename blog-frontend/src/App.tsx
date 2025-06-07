@@ -6,24 +6,9 @@ import BlogPost from "./pages/BlogPost";
 import SubscribeModal from "./pages/Subscribe";
 import Layout from "./components/Layout";
 import { Routes, Route } from "react-router-dom";
-import { Box } from "@chakra-ui/react";
-import { ThemeProvider, useTheme } from "next-themes";
+import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
-
-const FAQs = () => {
-  const { theme } = useTheme();
-  return (
-    <Box
-      py={16}
-      textAlign="center"
-      fontSize="2xl"
-      bg={theme === "dark" ? "gray.900" : "white"}
-      color={theme === "dark" ? "white" : "gray.900"}
-    >
-      Frequently Asked Questions
-    </Box>
-  );
-};
+import FAQs from "./pages/Faqs";
 
 function App() {
   const [isSubscribeOpen, setIsSubscribeOpen] = useState(false);

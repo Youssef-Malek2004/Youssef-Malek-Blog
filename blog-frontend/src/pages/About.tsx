@@ -24,6 +24,7 @@ const About = () => {
       px={{ base: 4, md: 0 }}
       bg={bg}
       color={color}
+      transition="background 0.2s, color 0.2s"
     >
       {/* Right Sidebar with Photo and Intro */}
       <Box
@@ -72,9 +73,7 @@ const About = () => {
           </Link>
           .
           <br />
-          <br />
-          I’m obsessed with the <strong>math behind ML and AI</strong>. Ever since I saw <strong>Jarvis</strong> in Iron Man, I knew{" "}
-          <strong>AGI</strong> was the future. Honestly for me that is both exciting and kinda terrifying haha.
+          <br />I became obsessed with the <strong>math behind ML and AI</strong>, ever since I saw <strong>Jarvis</strong> in Iron Man.
           <br />
           <br />
           This blog’s for anyone who’s <strong>curious</strong>, <strong>stuck</strong>, or just needs something <strong>real</strong>. No
@@ -99,6 +98,18 @@ const About = () => {
 
         <VStack align="stretch" spaceY={8}>
           {[
+            {
+              title: "Very Important Remark",
+              body: (
+                <>
+                  No AI tools will be used to write this blog's content in any way. <strong>NONE</strong>. I made this blog to combat the
+                  currently upcoming urge to rely on AI tools such as ChatGPT to get more creative and honestly to hell with that.
+                  <br />
+                  <br />
+                  So if you're reading this, you're reading <strong>me</strong>, not a prompt, not a prediction, but a person.
+                </>
+              ),
+            },
             {
               title: "Why I Started This Blog",
               body: (
