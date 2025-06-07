@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Home / Blog list -->
+  <url>
+    <loc>https://youssefmalek.blog/</loc>
+    <lastmod>2025-06-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://youssefmalek.blog/about</loc>
+    <lastmod>2025-06-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Roadmap -->
+  <url>
+    <loc>https://youssefmalek.blog/roadmap</loc>
+    <lastmod>2025-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- FAQs -->
+  <url>
+    <loc>https://youssefmalek.blog/faqs</loc>
+    <lastmod>2025-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>
