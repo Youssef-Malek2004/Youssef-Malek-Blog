@@ -13,7 +13,7 @@ export type NodeMeta = {
 const baseNodeStyle: React.CSSProperties = {
   padding: 12,
   borderRadius: 8,
-  border: "2px solid #cc2277",
+  border: "2px solid #2e7d32",
   fontWeight: "bold",
   fontSize: "14px",
   textAlign: "center",

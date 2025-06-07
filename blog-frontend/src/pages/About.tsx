@@ -11,7 +11,7 @@ const About = () => {
   const bg = theme === "dark" ? "gray.900" : "white";
   const color = theme === "dark" ? "white" : "gray.900";
   const secondary = theme === "dark" ? "gray.300" : "gray.700";
-  const highlight = "#cc2277";
+  const highlight = "#2e7d32";
 
   return (
     <Flex
@@ -35,7 +35,7 @@ const About = () => {
         textAlign={{ base: "center", md: "left" }}
       >
         <Image
-          src="My-Photo.png"
+          src="My-New-Photo.png"
           alt="Youssef Malek"
           borderRadius="full"
           boxSize={{ base: "100px", md: "140px" }}

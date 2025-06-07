@@ -221,7 +221,7 @@ export default function Roadmap() {
           style={{
             fontSize: "1.875rem",
             fontWeight: "bold",
-            color: "#cc2277",
+            color: "#2e7d32",
             marginBottom: "1.25rem",
           }}
         >
@@ -301,8 +301,8 @@ export default function Roadmap() {
         }}
       >
         <p>
-          If you’d like to <span style={{ color: "#cc2277", fontWeight: 500 }}>propose changes</span> to my roadmap or share any valuable{" "}
-          <span style={{ color: "#cc2277", fontWeight: 500 }}>resource advice</span> or even recommendations, feel free to send me a
+          If you’d like to <span style={{ color: "#2e7d32", fontWeight: 500 }}>propose changes</span> to my roadmap or share any valuable{" "}
+          <span style={{ color: "#2e7d32", fontWeight: 500 }}>resource advice</span> or even recommendations, feel free to send me a
           personal email. You can find it in the footer.
         </p>
         <p style={{ marginTop: "0.5rem" }}>We’re all in the loop, after all 😉</p>
@@ -315,7 +315,7 @@ export default function Roadmap() {
             width: "100%",
             height: "85vh",
             maxWidth: "1200px",
-            border: "2px solid #cc2277",
+            border: "2px solid #2e7d32",
             borderRadius: 12,
             padding: "1rem",
             position: "relative",
@@ -327,7 +327,7 @@ export default function Roadmap() {
           <h2
             style={{
               fontSize: "1.5rem",
-              color: "#cc2277",
+              color: "#2e7d32",
               marginBottom: "1rem",
               textAlign: "center",
             }}
@@ -463,7 +463,7 @@ export default function Roadmap() {
             fontSize: "1.5rem",
             fontWeight: "600",
             marginBottom: "1rem",
-            color: "#cc2277",
+            color: "#2e7d32",
             textAlign: "center",
           }}
         >
@@ -491,7 +491,7 @@ export default function Roadmap() {
                 transition: "background-color 0.2s, border-color 0.2s",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#cc2277";
+                e.currentTarget.style.borderColor = "#2e7d32";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = theme === "dark" ? "#4b5563" : "#e2e8f0";
@@ -514,7 +514,7 @@ export default function Roadmap() {
                   color: theme === "dark" ? "#a1a1aa" : "#4b5563",
                 }}
               >
-                <span style={{ color: "#cc2277", fontWeight: 500 }}>Used In:</span> {res.usedIn.join(", ")}
+                <span style={{ color: "#2e7d32", fontWeight: 500 }}>Used In:</span> {res.usedIn.join(", ")}
               </p>
               <p
                 style={{
@@ -522,7 +522,7 @@ export default function Roadmap() {
                   color: theme === "dark" ? "#d1d5db" : "#374151",
                 }}
               >
-                <span style={{ color: "#cc2277", fontWeight: 500 }}>Review:</span> {res.review}
+                <span style={{ color: "#2e7d32", fontWeight: 500 }}>Review:</span> {res.review}
               </p>
             </div>
           ))}

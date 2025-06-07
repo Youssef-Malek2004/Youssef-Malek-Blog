@@ -51,7 +51,7 @@ const faqItems = [
 
 const FAQs = () => {
   const { theme } = useTheme();
-  const highlight = "#cc2277";
+  const highlight = "#2e7d32";
 
   const bg = theme === "dark" ? "gray.900" : "white";
   const cardBg = theme === "dark" ? "gray.800" : bg;

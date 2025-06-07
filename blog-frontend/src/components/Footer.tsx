@@ -23,17 +23,17 @@ const Footer = () => {
       transition="all 0.2s"
     >
       <Stack spaceY={2}>
-        <Text fontWeight="bold" color="#cc2277" fontSize="md">
+        <Text fontWeight="bold" color="#2e7d32" fontSize="md">
           A Youssef Malek Blog — Found in the Loop
         </Text>
 
         <Text fontSize="sm" color={textColor}>
           Let’s connect:{" "}
-          <Link href="mailto:youssefmmalek@gmail.com" color="#cc2277" fontWeight="500">
+          <Link href="mailto:youssefmmalek@gmail.com" color="#2e7d32" fontWeight="500">
             youssefmmalek@gmail.com
           </Link>{" "}
           ·{" "}
-          <Link href="https://www.linkedin.com/in/youssef-momalek/" color="#cc2277" fontWeight="500">
+          <Link href="https://www.linkedin.com/in/youssef-momalek/" color="#2e7d32" fontWeight="500">
             LinkedIn
           </Link>
         </Text>

@@ -62,7 +62,7 @@ const BlogList = () => {
     <Flex w="90vw" mx="auto" py={12} gap={12} direction={{ base: "column", md: "row" }} align={{ base: "stretch", md: "flex-start" }}>
       {/* Main Content */}
       <Box w={{ base: "100%", md: "65%" }}>
-        <Heading as="h1" size="sm" mb={8} color="#cc2277">
+        <Heading as="h1" size="sm" mb={8} color="#2e7d32">
           Articles, Blogs and Tutorials
         </Heading>
 
@@ -129,7 +129,7 @@ const BlogList = () => {
         top="100px"
         alignSelf="flex-start"
       >
-        <Text fontSize="sm" fontWeight="bold" letterSpacing="wide" mb={4} color="#cc2277">
+        <Text fontSize="sm" fontWeight="bold" letterSpacing="wide" mb={4} color="#2e7d32">
           POPULAR CONTENT
         </Text>
 
