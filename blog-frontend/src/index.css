@@ -93,3 +93,15 @@ button:focus-visible {
   outline: none !important;
   box-shadow: none !important;
 }
+
+.blog-content p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.blog-content code {
+  display: block;
+  text-align: center;
+  margin: 1rem auto;
+  font-size: 1.1rem;
+}

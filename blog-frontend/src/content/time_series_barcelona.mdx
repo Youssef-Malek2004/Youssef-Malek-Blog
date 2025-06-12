@@ -1,0 +1,1001 @@
+---
+title: "Time-Series 101: Reading the Pulse of the World"
+description: "Before you forecast the future, learn how to hear it. A 7-minute crash course in the core logic of time series analysis—lag, cycles, noise, and all."
+date: "2025-06-12"
+---
+
+<p
+  style={{
+    fontSize: "1.25rem",
+    fontWeight: 500,
+    color: "#2e7d32",
+    lineHeight: "1.8",
+    fontStyle: "italic",
+    marginTop: "2rem",
+    marginBottom: "2rem",
+  }}
+>
+  You probably don’t think much about how your heartbeat, the stock market, or a traffic jam are all connected. But beneath all of them lies
+  a subtle rhythm.
+  <strong>Time series analysis is the science of making sense of these rhythms.</strong>
+  And before we forecast the future, we have to ask: <strong>how stable is the present?</strong>
+  <br />
+  From building next-gen agents that couple reasoning with time-awareness, to forecasting the next inflation cycle,{" "}
+  <strong>time series is rooted in statistics and ML whether we like it or not</strong>. And it would be foolish to try building anything
+  foundational without understanding it.
+</p>
+
+<br />
+
+---
+
+<br />
+
+# What We’ll Cover in This Blog Post
+
+<br />
+
+<TimeSeriesIntroList />
+
+<br />
+
+We've got a lot to unpack, let's begin!
+
+<br />
+
+---
+
+<br />
+
+# <h2 id="what-is-a-time-series">1 · What Is a Time Series?</h2>
+
+<br />
+
+Unlike traditional datasets that assume each data point is **independent and identically distributed (i.i.d.)**, time series break that assumption.
+
+In an i.i.d. setting, we assume:
+
+<div align="center">
+  
+$$
+P(X_t \mid X_{t-1}, X_{t-2}, \dots) = P(X_t)
+$$
+
+</div>
+
+<div align="center" style={{ color: "gray" }}>
+  Past values provide no information about the future — the process has no memory.
+</div>
+
+<br />
+
+But in time series, we typically observe **autocorrelation**:
+
+<div align="center">
+  
+$$
+P(X_t \mid X_{t-1}, X_{t-2}, \dots) \ne P(X_t)
+$$
+
+</div>
+
+<div align="center" style={{ color: "gray" }}>
+  Future values are dependent on previous values — the system has memory.
+</div>
+
+<br />
+
+This motivates models of the form:
+
+<div align="center">
+
+$$
+X_t = f(X_{t-1}, X_{t-2}, \dots, X_{t-k}) + \varepsilon_t
+$$
+
+</div>
+
+<div align="center" style={{ color: "gray" }}>
+  Where $f$ is a function (e.g., linear in AR models, non-linear in neural nets) and $\varepsilon_t$ is noise (called white noise).
+</div>
+
+<br />
+
+This makes time series **harder to model**, but also **richer to understand**. Why? Because there’s structure across time waiting to be captured.
+
+<br />
+
+---
+
+<br />
+
+<h3 id="time-series-modeling-approaches" style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
+  Two Approaches to Modeling Time
+</h3>
+
+<p>When working with time series data, there are two core ways to model time. Each provides a different lens:</p>
+
+<div style={{ margin: "3rem 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
+  <div style={{ padding: "1rem 2rem", border: "2px solid #ccc", borderRadius: "8px", fontWeight: "600", fontSize: "1.1rem" }}>
+    Time Series Analysis
+  </div>
+
+{/* Flowchart arrows */}
+
+  <div style={{ position: "relative", height: "5rem", width: "400px", display: "flex", justifyContent: "center" }}>
+    {/* Main vertical line from top box */}
+    <div
+      style={{
+        position: "absolute",
+        top: 0,
+        left: "50%",
+        width: "2px",
+        height: "2rem",
+        backgroundColor: "#ccc",
+        transform: "translateX(-50%)",
+      }}
+    ></div>
+
+    {/* Horizontal connector line */}
+    <div style={{ position: "absolute", top: "2rem", left: "5%", width: "90%", height: "2px", backgroundColor: "#ccc" }}></div>
+
+    {/* Left branch */}
+    <div style={{ position: "absolute", top: "2rem", left: "5%", width: "2px", height: "2rem", backgroundColor: "#ccc" }}></div>
+    <div
+      style={{
+        position: "absolute",
+        top: "3.8rem",
+        left: "5.3%",
+        width: 0,
+        height: 0,
+        borderLeft: "6px solid transparent",
+        borderRight: "6px solid transparent",
+        borderTop: "8px solid #ccc",
+        transform: "translateX(-50%)",
+      }}
+    ></div>
+
+    {/* Right branch */}
+    <div style={{ position: "absolute", top: "2rem", right: "5%", width: "2px", height: "2rem", backgroundColor: "#ccc" }}></div>
+    <div
+      style={{
+        position: "absolute",
+        top: "3.8rem",
+        right: "5.3%",
+        width: 0,
+        height: 0,
+        borderLeft: "6px solid transparent",
+        borderRight: "6px solid transparent",
+        borderTop: "8px solid #ccc",
+        transform: "translateX(50%)",
+      }}
+    ></div>
+
+  </div>
+
+  <div style={{ display: "flex", gap: "4rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div style={{ padding: "0.75rem 1.75rem", border: "2px solid #00afc3", borderRadius: "6px", fontWeight: "500", fontSize: "1rem" }}>
+        Time Domain Approach
+      </div>
+      <div style={{ marginTop: "0.75rem", textAlign: "center", maxWidth: "280px", fontSize: "1rem", color: "#888" }}>
+        Focuses on how current values depend on past values.
+      </div>
+    </div>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div style={{ padding: "0.75rem 1.75rem", border: "2px solid #7c4dff", borderRadius: "6px", fontWeight: "500", fontSize: "1rem" }}>
+        Frequency Domain Approach
+      </div>
+      <div style={{ marginTop: "0.75rem", textAlign: "center", maxWidth: "280px", fontSize: "1rem", color: "#888" }}>
+        Focuses on recurring cycles or seasonal patterns.
+      </div>
+    </div>
+  </div>
+</div>
+
+<br />
+
+<div style={{ fontSize: "1.6rem", fontWeight: 700, marginTop: "2rem", marginBottom: "0.75rem" }}>1. Time Domain Approach</div>
+
+<p>
+  In this approach, we examine the influence of <strong>past values</strong> on the present, what’s called a <strong>lag structure</strong>.
+  It’s about memory: how much does today depend on what came before?
+</p>
+
+<br />
+
+<p>
+  A classic example of this approach is forecasting daily COVID-19 cases using past data. For instance, if you're analyzing
+  <strong> Barcelona's </strong> case history, the number of cases reported 7 days ago may strongly predict today's count, this is known as a
+  <strong> 7-day lag </strong>.
+</p>
+
+<br />
+
+<p>
+  <strong> Of course, how do we choose the right lag? </strong> Later in the post, we’ll explore this using tools like the
+  <strong> Autocorrelation Function (ACF) </strong> to identify meaningful temporal (temporal = to do with time, space = spatial) dependencies,
+  especially useful during outbreak phases.
+</p>
+
+<br />
+
+<p>
+  Below is a simple <strong>forecasting</strong> example using a <strong>GRU (Gated Recurrent Unit)</strong>, a type of recurrent neural
+  network (RNN) designed to model sequential patterns over time. We train it on a <strong>7-day sliding window</strong> of past COVID-19
+  case counts to predict the next day’s value.
+</p>
+
+<img
+  src="/assets/gru_prediction_plot.png"
+  loading="lazy"
+  alt="GRU prediction vs actual COVID-19 cases"
+  style={{ borderRadius: "0.5rem", margin: "1rem 0", maxWidth: "100%", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+/>
+
+<br />
+
+<p>
+  A <strong>sliding window</strong> simply means that we look at a fixed number of past days (in this case, 7), then shift the window
+  forward by one day for each training example. For instance, if today is day 10, we use data from days 3 to 9 to predict the value on day
+  10 and repeat this pattern throughout the time series.
+</p>
+
+<br />
+
+<p>
+  All the examples covered in this post are available in a public GitHub repository:&nbsp;
+  <div style={{ display: "flex", justifyContent: "center", margin: "1rem 0" }}>
+    <a
+      href="https://github.com/Youssef-Malek2004/Blog-Notebooks/blob/main/Blog-Notebooks/Time-Series-101/Time-Series-101.ipynb"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Blog Notebook: Time-Series-101.ipynb
+    </a>
+  </div>
+  You’ll find the complete code, helper functions, and even saved figures, all shared under the MIT license to encourage learning and reuse.
+</p>
+
+<div style={{ fontSize: "1.6rem", fontWeight: 700, marginTop: "2.5rem", marginBottom: "0.75rem" }}>2. Frequency Domain Approach</div>
+
+<p>
+  While the time domain asks “How does yesterday affect today?”, the <strong>frequency domain</strong> asks a different question:
+  <br />
+  <div style={{ display: "flex", justifyContent: "center", margin: "0.5rem 0" }}>
+    <em>“Are there hidden rhythms or repeating patterns over time?”</em>
+  </div>
+</p>
+
+<br />
+
+<p>
+  Instead of looking at lag-based memory, we zoom out and study how often certain fluctuations repeat, whether weekly, monthly (or even per
+  minute - depending on application), or otherwise. This is especially helpful when working with seasonal or behavioral patterns (e.g.,
+  testing dips on weekends, reporting surges on Mondays).
+</p>
+
+<br />
+
+<p>
+  To reveal these cycles, we use the <strong>Fast Fourier Transform (FFT)</strong> — a mathematical tool that decomposes a signal into its
+  frequency components (I won't go over any Maths about it today but stay on the lookout, I'll blog about it soon!). If a pattern repeats
+  every 7 days, FFT will show a sharp spike at <strong>period = 7</strong>.
+</p>
+
+<img
+  src="/assets/fft_barcelona.png"
+  loading="lazy"
+  alt="FFT spectrum of Barcelona COVID-19 cases"
+  style={{ borderRadius: "0.5rem", margin: "1rem 0", maxWidth: "100%", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+/>
+
+<br />
+
+<p>
+  The plot above shows the frequency spectrum of Barcelona’s COVID-19 cases over the Barcelona Time Series dataset. We first applied a{" "}
+  <strong>Hamming window</strong> to smooth the edges and reduce noise artifacts, and finally filtered out extremely long periods (> 60
+  days) for clarity.
+</p>
+
+<br />
+
+<p>
+  The resulting spectrum reveals a clear <strong>7-day cycle</strong> — a recurring pulse likely tied to weekly testing and reporting
+  behavior. There’s also a smaller spike around <strong>3.5 days</strong>, which could reflect sub-weekly rhythms or statistical noise.
+</p>
+
+<br />
+
+<p>
+  This frequency-based perspective complements the time-domain approach beautifully. It’s less about predicting tomorrow, and more about
+  understanding the <strong>seasonality</strong> and periodic nature of real-world time series.
+</p>
+
+<br />
+
+<p>Just like before, the full FFT code and plots can be found in my open-source notebook!</p>
+
+<br />
+
+---
+
+<br />
+
+# <h2 id="white-noise-introduction">2 · White Noise - An Introduction</h2>
+
+<br />
+
+Before modeling real-world signals, it’s crucial to understand what **true randomness** looks like, and in time series analysis, that’s **white noise**.
+
+<div style={{ marginTop: "2rem", marginBottom: "1.5rem" }}>
+<div style={{ fontSize: "1.6rem", fontWeight: 700, marginTop: "2rem", marginBottom: "0.75rem" }}>1. What is White Noise?</div>
+
+{" "}
+
+<p style={{ fontSize: "1.1rem", lineHeight: 1.6 }}>
+  <strong>White noise</strong> is a sequence of random variables that represents pure randomness in time series analysis. It serves as the{" "}
+  <em>baseline</em> for unpredictability. Any model that cannot outperform white noise hasn't truly learned anything useful.
+</p>
+
+{" "}
+
+<div style={{ fontSize: "1.1rem", lineHeight: 1.8, marginTop: "1.5rem" }}>
+<ul style={{ paddingLeft: "1.5rem", listStyleType: "disc" }}>
+  <li>
+    <strong>Zero Mean:</strong> The expected value is 0.
+    <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+      <code>$\mathbb{E}[w_t] = 0$</code>
+    </div>
+  </li>
+  <li style={{ marginTop: "1rem" }}>
+    <strong>Constant Variance:</strong> The spread remains stable over time.
+    <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+      <code>$\mathrm{Var}(w_t) = \sigma^2$</code>
+    </div>
+  </li>
+  <li style={{ marginTop: "1rem" }}>
+    <strong>No Autocorrelation:</strong> Past values give no clue about future ones.
+    <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+      <code>$\mathrm{Cov}(w_t, w_{t-h}) = 0 \quad \text{for all } h \ne 0$</code>
+    </div>
+  </li>
+</ul>
+
+</div>
+
+  <p style={{ fontSize: "1.1rem", lineHeight: 1.6, marginTop: "1rem" }}>
+    In short, white noise is the **reference signal** we measure against, any predictive model should aim to beat this baseline, otherwise the model would just behave like a **simple coin toss**.
+  </p>
+</div>
+
+<div style={{ fontSize: "1.6rem", fontWeight: 700, marginTop: "2rem", marginBottom: "0.75rem" }}>2. Three flavours of White Noise</div>
+
+We often distinguish between increasing levels of statistical independence:
+
+<div style={{ fontSize: "1.1rem", lineHeight: 1.8, marginTop: "1.5rem" }}>
+  <strong>1. White Noise (WN) - Exactly like the above definition</strong>
+
+  <p style={{ marginTop: "1rem" }}>It can be sampled from any distribution, as long as values are uncorrelated.</p>
+</div>
+
+<div style={{ fontSize: "1.1rem", lineHeight: 1.8, marginTop: "2rem" }}>
+  <strong>2. IID Noise</strong>
+  <ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", marginTop: "0.5rem" }}>
+    <li>
+      <strong>All White Noise Properties</strong>
+    </li>
+    <li style={{ marginTop: "1rem" }}>
+      <strong>Independent & Identically Distributed:</strong> Each $w_t$ is drawn independently.
+      <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+        <code>$w_t \overset{iid}{\sim} F$</code>
+      </div>
+    </li>
+  </ul>
+  <p style={{ marginTop: "1rem" }}>
+    For example, you might draw $w_t$ from a **uniform** distribution, I'll give a code example for better understandability.
+  </p>
+</div>
+
+<div style={{ fontSize: "1.1rem", lineHeight: 1.8, marginTop: "2rem" }}>
+  <strong>3. Gaussian White Noise</strong>
+  <ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", marginTop: "0.5rem" }}>
+    <li>
+      <strong>All IID White Noise Properties</strong>
+    </li>
+    <li style={{ marginTop: "1rem" }}>
+      <strong>Gaussian Distribution:</strong> Samples are drawn from a normal distribution.
+      <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+        <code>$w_t \sim \mathcal{N}(0, \sigma^2)$</code>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<br />
+
+---
+
+<br />
+
+<p>Here’s why **Gaussian/Normal** distributions are special:</p>
+
+<div
+  style={{
+    fontSize: "1.1rem",
+    textAlign: "center",
+    margin: "2rem auto",
+    fontStyle: "italic",
+    color: "#444",
+    lineHeight: 1.6,
+  }}
+>
+  <em>"If the variables are Gaussian and **uncorrelated**, then they are also **independent**."</em>
+</div>
+
+---
+
+<br />
+
+<p>
+  Okay, I’ve been throwing around terms like <strong>correlation</strong> and <strong>independence</strong> — but what do they actually mean
+  and is there a difference between them? These concepts are fundamental to understanding **time series analysis**, so in the next section,
+  we’ll break them down clearly and give an example on the flavours of white noise.
+</p>
+
+<div style={{ fontSize: "1.6rem", fontWeight: 700, marginTop: "2rem", marginBottom: "0.75rem" }}>
+  3. 3.Correlation vs. Independence + White Noise Example
+</div>
+
+<p style={{ fontSize: "1.1rem", lineHeight: 1.7 }}>
+  <strong>🔸 Correlation</strong> captures <em>linear relationships</em>. Two variables can be uncorrelated but still dependent in
+  non-linear ways.
+</p>
+
+<p style={{ fontSize: "1.1rem", lineHeight: 1.6 }}>
+  <strong>🔸 Independence</strong> is a stronger condition: it means knowing one variable tells you <em>nothing</em> about the other, not
+  even in complex or non-linear forms.
+</p>
+
+<div style={{ fontSize: "1.1rem", marginTop: "1rem", lineHeight: 1.7 }}>
+  <strong>🔸 Example: Uncorrelated but Dependent</strong>
+  <p>
+    Let $X \in \{-1, 0, 1\}$ with equal probability, and define $Y = X^2$.
+  </p>
+  <p>
+    Although $X$ and $Y$ have zero correlation, since $X$ is symmetric around 0 and also $X$ has a non-linear relationship with $Y$, there is still a clear dependency:
+    $Y$ is a deterministic function of $X$.
+  </p>
+  <div style={{ textAlign: "center", marginTop: "1rem" }}>
+    <code>
+      $$\text{Cov}(X, Y) = 0 \quad \text{but} \quad Y = X^2$$
+    </code>
+  </div>
+</div>
+
+<div style={{ marginTop: "1.5rem", fontSize: "1.1rem", lineHeight: 1.7 }}>
+  <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem", textAlign: "left" }}>
+    <thead>
+      <tr style={{ backgroundColor: "#f8f8f8", fontWeight: "600" }}>
+        <th style={{ padding: "0.6rem" }}>Concept</th>
+        <th style={{ padding: "0.6rem" }}>Formal Definition</th>
+        <th style={{ padding: "0.6rem" }}>Does it imply independence?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style={{ padding: "0.6rem" }}>Uncorrelated</td>
+        <td style={{ padding: "0.6rem" }}>$\mathrm{Cov}(X, Y) = 0$</td>
+        <td style={{ padding: "0.6rem" }}>❌ Not always — they could still be dependent</td>
+      </tr>
+      <tr>
+        <td style={{ padding: "0.6rem" }}>Independent</td>
+        <td style={{ padding: "0.6rem" }}>$P(X, Y) = P(X) \cdot P(Y)$</td>
+        <td style={{ padding: "0.6rem" }}>✅ Yes</td>
+      </tr>
+      <tr>
+        <td style={{ padding: "0.6rem", fontStyle: "italic" }}>Note (Gaussian case)</td>
+        <td colSpan="2" style={{ padding: "0.6rem" }}>
+          If $X$ and $Y$ are jointly Gaussian and uncorrelated, then they are also independent.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+<h3 style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: "0.5rem" }}>🔸 Example: Simulating White Noise</h3>
+<p>
+  I simulate 200 samples for each of the three flavors of white noise (**Plain White**, **IID** and **Gaussian** ). You’ll see how each one
+  differs subtly in structure and randomness:
+</p>
+
+```python
+np.random.seed(42)
+n = 200
+sigma = 1
+
+# 1. White Noise (WN): (Most General thus we can sample from any distribution) zero-mean, constant variance, uncorrelated
+# w_t = (-1)^t * z_t
+white_noise = ((-1) ** np.arange(n)) * np.random.normal(0, 1, size=n)
+
+# 2. IID noise: same as WN, but can use non-Gaussian distribution
+iid_noise = np.random.uniform(-1, 1, size=n)
+
+# 3. Gaussian White Noise: WN + Gaussian + IID
+gaussian_white_noise = np.random.normal(0, 1, size=n)
+```
+
+<p style={{ fontSize: "1.1rem", lineHeight: 1.7, marginTop: "1.5rem" }}>
+  <strong> Recap of the 3 Flavors:</strong>
+</p>
+
+<ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", fontSize: "1.1rem", lineHeight: 1.7 }}>
+  <li>
+    <strong>White Noise (WN):</strong><br />
+    <div style={{ textAlign: "center", marginTop: "1rem" }}>
+    $$w_t = (-1)^t \cdot z_t \quad \text{where} \quad z_t \sim \mathcal{N}(0, 1)$$
+    </div>
+    <br />This sequence has zero mean and constant variance, and is uncorrelated due to the alternating sign pattern. However, it is <em>not IID</em>, the $(-1)^t$ introduces a deterministic structure, violating independence.
+  </li>
+
+  <li style={{ marginTop: "1rem" }}>
+    <strong>IID Noise:</strong><br />
+    <div style={{ textAlign: "center", marginTop: "1rem" }}>
+    $$w_t \overset{\text{iid}}{\sim} \mathcal{U}(-1, 1)$$
+    </div>
+    <br />Each value is drawn independently from a uniform distribution. This satisfies both independence and identical distribution, making it valid IID noise, but not necessarily Gaussian (**To satisfy Gaussian we must model from the Normal Distribution**).
+  </li>
+
+  <li style={{ marginTop: "1rem" }}>
+    <strong>Gaussian White Noise:</strong><br />
+    <div style={{ textAlign: "center", marginTop: "1rem" }}>
+    $$w_t \overset{\text{iid}}{\sim} \mathcal{N}(0, \sigma^2)$$
+    </div>
+    <br />Combines the properties of WN and IID, values are independent, identically distributed, and drawn from a **normal distribution**.
+  </li>
+</ul>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+<h3 style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: "0.5rem" }}>🔸 Visualization</h3>
+
+<p>
+  Let's visualize our white noise flavors, I visualize the **Vanilla Whie Noise**, **IID White Noise** and the **Gaussian White Noise**. Of
+  course you can also find those examples in my Notebook.
+</p>
+
+```python
+# Plot
+fig, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
+
+axs[0].plot(white_noise, color="#2e7d32")
+axs[0].set_title("White Noise (WN): ~ N(0, 1)")
+
+axs[1].plot(iid_noise, color="#3366cc")
+axs[1].set_title("IID Noise: Uniform(-1, 1)")
+
+axs[2].plot(gaussian_white_noise, color="#cc2277")
+axs[2].set_title("Gaussian White Noise: IID ~ N(0, 1)")
+
+plt.tight_layout()
+plt.show()
+```
+
+<img
+  src="/assets/white_noise_variants.png"
+  loading="lazy"
+  alt="White Noise Variants"
+  style={{ borderRadius: "0.5rem", margin: "1rem 0", maxWidth: "100%", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+/>
+
+<p style={{ fontSize: "1.1rem", lineHeight: 1.7 }}>
+  At first glance, these three signals, **vanilla white noise, IID noise, and Gaussian white noise**, might all look like just random
+  wiggles. And that's fair! They share visual chaos and unpredictability. But underneath that apparent randomness lie fundamental
+  differences in their statistical properties.
+</p>
+
+<br />
+
+<p>
+  These distinctions are not just academic, they shape how models interpret and process time series data. Whether it's an **ARIMA** model or
+  a **deep learning architecture**, understanding these differences is crucial for building models that go beyond guessing.
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+<h3 style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: "0.75rem" }}>4. Summary</h3>
+
+<div style={{ fontSize: "1.1rem", lineHeight: 1.6 }}>
+  <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
+    <thead>
+      <tr style={{ backgroundColor: "#f4f4f4", textAlign: "left" }}>
+        <th style={{ padding: "0.5rem" }}>Type</th>
+        <th style={{ padding: "0.5rem" }}>Distribution</th>
+        <th style={{ padding: "0.5rem" }}>Independence</th>
+        <th style={{ padding: "0.5rem" }}>Gaussian?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style={{ padding: "0.5rem" }}>White Noise (WN)</td>
+        <td style={{ padding: "0.5rem" }}>Any</td>
+        <td style={{ padding: "0.5rem" }}>❌ Not required</td>
+        <td style={{ padding: "0.5rem" }}>❌</td>
+      </tr>
+      <tr>
+        <td style={{ padding: "0.5rem" }}>IID Noise</td>
+        <td style={{ padding: "0.5rem" }}>Any</td>
+        <td style={{ padding: "0.5rem" }}>✅ Yes</td>
+        <td style={{ padding: "0.5rem" }}>❌</td>
+      </tr>
+      <tr>
+        <td style={{ padding: "0.5rem" }}>Gaussian White Noise</td>
+        <td style={{ padding: "0.5rem" }}>Normal ($\mathcal{N}$)</td>
+        <td style={{ padding: "0.5rem" }}>✅ Yes</td>
+        <td style={{ padding: "0.5rem" }}>✅</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p style={{ fontSize: "1.1rem", marginTop: "1.25rem" }}>
+  White noise may seem trivial, but it defines the <strong>baseline</strong>. Our goal in modeling is to find signals that are{" "}
+  <em>more predictable</em> than this.
+</p>
+
+<div
+  style={{
+    fontSize: "1.1rem",
+    textAlign: "center",
+    margin: "2rem auto",
+    fontStyle: "italic",
+    color: "#444",
+    lineHeight: 1.6,
+  }}
+>
+  <em>"If your model can’t beat white noise, it’s no better than guessing."</em>
+</div>
+
+<p style={{ fontSize: "1.1rem", marginTop: "1.25rem" }}>
+  In the next section, we’ll explore what happens when you try to <strong>smooth</strong> white noise, and how that can trick you into
+  seeing patterns even when there are none.
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+# <h2 id="moving-average-section">3 · Moving Averages: Smoothing the Chaos</h2>
+
+<br />
+
+<p>
+  White noise may look wild, but it’s statistically well-behaved — mean 0, constant variance, and no memory. But what happens when we try to
+  <strong>smooth it out</strong>?
+</p>
+
+<br />
+
+<p>
+  But first, what is <strong>smoothing</strong> and what does a **moving average** mean?
+</p>
+
+<div style={{ textAlign: "center", margin: "2rem auto", fontSize: "1.1rem", lineHeight: 1.7 }}>
+  <em>
+    "<strong>Smoothing</strong> is a technique used to reduce noise and reveal underlying trends by averaging adjacent values in a time
+    series, meaning the **more a series is smooth the more the adjacend time points are correlated**."
+  </em>
+</div>
+
+<div style={{ textAlign: "center", margin: "2rem auto", fontSize: "1.1rem", lineHeight: 1.7 }}>
+  <em>
+    "<strong>Moving Average</strong> is the most basic form of smoothing, where each value is replaced by the average of its neighbors."
+  </em>
+</div>
+
+<p>Here is a very brief example of taking the **Moving Average** of 3 data points:</p>
+
+<div style={{ textAlign: "center", margin: "2rem auto" }}>
+  $\tilde{X}_t = \frac{1}
+  {3}(X_{t - 1} + X_t + X_{t + 1})$
+</div>
+
+<p>
+  When you average over time, each new value partially depends on the values before it. That gives the illusion of a signal, even if none
+  existed to begin with.
+</p>
+
+<br />
+
+<p>
+  Let's see how our previous **Gaussian** white noise looks after smoothing by taking a 13 point **Moving Average** to see the full effect
+  of this smoothing transformation:
+</p>
+
+<img
+  src="/assets/smoothed_gaussian_white_noise.png"
+  loading="lazy"
+  alt="GRU prediction vs actual COVID-19 cases"
+  style={{ borderRadius: "0.5rem", margin: "1rem 0", maxWidth: "100%", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+/>
+
+<br />
+
+<p>Notice how it looks smoother, more "structured"? That’s correlation sneaking in.</p>
+
+<br />
+
+<p>
+  Moving averages are used for <strong>trend extraction</strong>, <strong>noise reduction</strong>, and even as building blocks in models
+  like <strong>MA(q)</strong> and <strong>ARIMA</strong>.
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+# <h2 id="autoregresion-section">4 · Autoregression: Memory Enters the Scene</h2>
+
+<br />
+
+<p>
+  White noise has no memory. But what if we <em>gave</em> it one? Let's push White Noise a bit further.
+</p>
+
+<br />
+
+<p>
+  An <strong>autoregressive (AR)</strong> process models the current value as a linear combination of past values:
+</p>
+
+<div style={{ textAlign: "center", margin: "2rem auto", fontSize: "1.1rem" }}>$$X_t = \phi_1 X_{t - 1} + \varepsilon_t$$</div>
+
+<p>This means that today’s value depends partially on **yesterday’s** value, with some added **randomness** (delicious).</p>
+
+<br />
+
+<p>Let’s generate a simple AR(1) process and visualize it:</p>
+
+```python
+np.random.seed(42)
+phi = 0.8
+n = 300
+ar = np.zeros(n)
+
+# Generate AR(1) process
+for t in range(1, n):
+    ar[t] = phi * ar[t - 1] + np.random.normal()
+
+plt.figure(figsize=(10, 4))
+plt.plot(ar, label=f"AR(1) with phi={phi}")
+plt.title("Autoregressive Process AR(1)")
+plt.xlabel("Time")
+plt.ylabel("Value")
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+
+<img
+  src="/assets/ar1_process.png"
+  loading="lazy"
+  alt="AR(1) Process to show the concept of Autoregression"
+  style={{ borderRadius: "0.5rem", margin: "1rem 0", maxWidth: "100%", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+/>
+
+<br />
+
+<p>
+  Now the plot feels different. It has <em>inertia</em>, a kind of “momentum” carried over time.
+</p>
+
+<br />
+
+<p>
+  This is what makes <strong>autoregression</strong> so powerful: it helps the model <em>remember</em>.
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+# <h2 id="random-walks">5 · Random Walks with Drift: The Illusion of Trend</h2>
+
+<br />
+
+<p>
+  Some time series appear to have a <strong>trend</strong>, they keep rising (or falling) steadily over time. But sometimes this is just a
+  clever illusion caused by a process known as a <strong>random walk with drift</strong>.
+</p>
+
+<br />
+
+<p>Imagine a process where each step depends on the previous one, plus a small bias and some noise:</p>
+
+<div style={{ textAlign: "center", margin: "2rem auto", fontSize: "1.1rem" }}>$$X_t = X_{t - 1} + \delta + \varepsilon_t$$</div>
+
+<br />
+
+<p>
+  Here, <strong>$\delta$</strong> is the <em>**drift**</em>, a constant that nudges the series in one direction over time. Even if the noise
+  has zero mean, this drift can create the illusion of a meaningful upward (or downward) trend.
+</p>
+
+<br />
+
+<p>Let’s generate and plot one to see what it looks like.</p>
+
+```python
+# --- Parameters ---
+n = 300
+delta = 0.2  # Drift term
+np.random.seed(42)
+noise = np.random.normal(0, 1, size=n)
+
+# --- Generate Random Walk with Drift ---
+random_walk = np.zeros(n)
+for t in range(1, n):
+    random_walk[t] = random_walk[t - 1] + delta + noise[t]
+
+# --- Plot ---
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.plot(np.arange(n), random_walk, color="#e65100", linewidth=1.5)
+
+# Styling
+ax.set_title("Random Walk with Drift: $X_t = X_{t - 1} + \\delta + \\varepsilon_t$", fontsize=13, color="#e65100")
+ax.tick_params(colors="#e65100")
+for spine in ax.spines.values():
+    spine.set_visible(False)
+
+plt.tight_layout()
+plt.show()
+```
+
+<p>
+  This code generates the <strong>Random Walk with Drift</strong>. I simulate it for 300 time steps, then **visualize** it below:
+</p>
+
+<img
+  src="/assets/random_walk_with_drift.png"
+  loading="lazy"
+  alt="Random Walk with Drift Example"
+  style={{ borderRadius: "0.5rem", margin: "1rem 0", maxWidth: "100%", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+/>
+
+<br />
+
+<p>
+  Looks like a trend, right? But beware: this isn’t a <strong>stationary process</strong>. Its <strong>mean</strong> and{" "}
+  <strong>variance</strong> change over time. That breaks many modeling assumptions and makes such processes hard to forecast reliably.
+</p>
+
+<br />
+
+<p>
+  In fact, many <strong>financial time series</strong> behave like this thus fooling **novice** forecasters daily.
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+# <h2 id="signal-noise">6 · Signal in Noise: Can You Hear It?</h2>
+
+<br />
+
+<p>
+  Suppose we now <strong>add white noise to a clean signal</strong>, like a cosine wave. Suddenly, detecting the true pattern becomes a
+  challenge.
+</p>
+
+```python
+# --- Parameters ---
+A = 2                   # Amplitude
+omega = 5               # Frequency (Hz)
+phi = np.pi / 4         # Phase shift (radians)
+t = np.linspace(0, 1, 1000)
+np.random.seed(42)
+
+# --- Signals ---
+signal_clean = A * np.cos(2 * np.pi * omega * t + phi)
+noise_05 = np.random.normal(0, 0.5, len(t))
+signal_noisy = signal_clean + noise_05
+```
+
+<p>
+  In this example, we simulate a **clean periodic signal**, a cosine wave with fixed amplitude, frequency, and phase, and then add
+  **Gaussian white noise** with a standard deviation of $\sigma = 0.5$ to observe how the signal gets distorted.
+</p>
+
+<img
+  src="/assets/noisy_cosine_signal.png"
+  loading="lazy"
+  alt="GRU prediction vs actual COVID-19 cases"
+  style={{ borderRadius: "0.5rem", margin: "1rem 0", maxWidth: "100%", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+/>
+
+<br />
+
+<p>
+  The clean curve, plotted in green, represents the ideal underlying signal:
+  $$X_t = A \cos(2\pi \omega t + \phi)$$
+  where $A = 2$, $\omega = 5$, and $\phi = \frac{\pi}{4}$.
+</p>
+
+<br />
+
+<p>
+  The magenta curve shows the same signal **contaminated with white noise**. Visually, it becomes harder to distinguish the wave’s structure
+  due to randomness.
+</p>
+
+<br />
+
+<p>
+  This highlights a critical challenge in time series analysis: <strong>separating signal from noise</strong>. In real-world scenarios, we
+  rarely observe the true signal in isolation, it’s always buried in uncertainty.
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+<p>
+  That’s where time series analysis becomes more <em>art</em> than science, we need methods that can{" "}
+  <strong>separate signal from noise</strong>.
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+# <h2>Coming Up Next</h2>
+
+<br />
+
+<p>
+  This post was just the <strong>prologue</strong>, a gentle entry into the world of time series. You’ve now been introduced to the
+  foundational building blocks:
+</p>
+
+<br />
+
+<ul>
+  <li>
+    <strong>White Noise</strong> - the benchmark of randomness
+  </li>
+  <li>
+    <strong>Moving Averages</strong> - the art of smoothing chaos
+  </li>
+  <li>
+    <strong>Autoregression</strong> - injecting memory into the past
+  </li>
+  <li>
+    <strong>Random Walks</strong> - when noise becomes a deceptive trend
+  </li>
+  <li>
+    <strong>Signal + Noise</strong> - learning to see the pattern beneath the clutter
+  </li>
+</ul>
+
+<br />
+
+<p>
+  In the <strong>next post</strong>, we’ll deepen our toolkit by:
+</p>
+
+<br />
+
+<ul>
+  <li>
+    Measuring memory using the <strong>Autocorrelation Function (ACF)</strong>
+  </li>
+  <li>
+    Understanding what makes a process <strong>stationary</strong>, and why it matters
+  </li>
+  <li>
+    Decomposing a real-world time series into its <strong>trend</strong>, <strong>seasonality</strong>, and <strong>residual</strong>
+  </li>
+</ul>
+
+<br />
+
+<p>
+  After that? We'll move from foundations to foresight, and begin the real journey of <strong>forecasting</strong>.
+</p>
+
+<br />
+
+<p style={{ textAlign: "center", fontSize: "1.1rem", fontStyle: "italic" }}>Time to move from theory... to timelines.</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "0rem" }} />
