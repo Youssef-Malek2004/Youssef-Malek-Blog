@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Home / Blog list -->
   <url>
     <loc>https://youssefmalek.blog/</loc>
     <lastmod>2025-06-07</lastmod>
@@ -8,7 +7,6 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- About -->
   <url>
     <loc>https://youssefmalek.blog/about</loc>
     <lastmod>2025-06-07</lastmod>
@@ -16,7 +14,6 @@
     <priority>0.6</priority>
   </url>
 
-  <!-- Roadmap -->
   <url>
     <loc>https://youssefmalek.blog/roadmap</loc>
     <lastmod>2025-06-07</lastmod>
@@ -24,7 +21,6 @@
     <priority>0.6</priority>
   </url>
 
-  <!-- FAQs -->
   <url>
     <loc>https://youssefmalek.blog/faqs</loc>
     <lastmod>2025-06-07</lastmod>
@@ -32,10 +28,16 @@
     <priority>0.5</priority>
   </url>
 
-    <!-- Blog Post: Time Series Introduction -->
   <url>
     <loc>https://www.youssefmalek.blog/blog/time_series_an_introduction</loc>
     <lastmod>2025-06-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+    <url>
+    <loc>https://www.youssefmalek.blog/blog/patterns_that_persist</loc>
+    <lastmod>2025-06-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
