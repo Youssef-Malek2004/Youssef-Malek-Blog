@@ -1,0 +1,965 @@
+---
+title: "Patterns that Persist: Stationarity, Correlation, and Trend Detection"
+description: "A practical guide to testing stationarity, interpreting autocorrelation, and decomposing time series into trend, seasonality, and noise - essential steps for robust forecasting and model selection."
+date: "2025-06-19"
+---
+
+---
+
+<p
+  style={{
+    fontSize: "1.25rem",
+    fontWeight: 500,
+    color: "#2e7d32",
+    lineHeight: "1.8",
+    fontStyle: "italic",
+    marginTop: "2rem",
+    marginBottom: "2rem",
+  }}
+>
+  Patterns come and go - but some persist, and some drift.{" "}
+  <strong>Before you trust any forecast, you need to know which you’re dealing with.</strong>
+  <br />
+  In this post, we’ll break down how to test if a series holds steady over time, measure how past values shape the present, and strip out
+  trends and cycles to expose what’s truly random.
+  <br />
+  <strong>
+    Whether you’re tuning a statistical model or feeding data to an ML pipeline for time series forecasting, this is your first defense
+    against misleading patterns.
+  </strong>
+</p>
+
+<br />
+
+---
+
+<br />
+
+# What We’ll Cover in This Blog Post
+
+<br />
+
+<PatternsThatPersistIntroList />
+
+<br />
+
+We've got a lot to unpack, let's begin!
+
+<br />
+
+---
+
+<br />
+
+# <h2 id="stationarity-basics">1 · What Does Stationarity Mean??</h2>
+
+<br />
+
+<p>
+  <p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+    Before you build any time series model, you have to ask a simple question:
+    <strong> does this data behave consistently over time?</strong>
+  </p>
+  If the answer is **yes**, you’re likely working with a <strong>stationary process</strong> and your life will be easy.
+  <p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+    But what if the answer is **"No"**? Then your forecasting models will fumble more than your **University Outfits**. Now buckle up ,
+    **This is about to get Serious!**
+  </p>
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+<ul>
+  <li>
+    <strong>Informally,</strong> a stationary time series keeps its basic properties steady over time:
+  </li>
+  <div style={{ fontSize: "1.1rem", lineHeight: 1.8, marginTop: "0rem" }}>
+    <ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", marginTop: "0rem" }}>
+      <li style={{ marginTop: "0.3rem" }}> The average level stays constant.</li>
+      <li style={{ marginTop: "0.3rem" }}> The spread (variance) doesn’t widen or shrink.</li>
+      <li style={{ marginTop: "0.3rem" }}>
+        {" "}
+        The way it relates to its past values doesn’t change. (This might sound confusing but think of this: **The correlation between Wednesday
+        and Monday should be the same as the correlation between Tuesday and Sunday, Cool right?**)
+      </li>
+    </ul>
+  </div>
+  <li style={{ marginTop: "1rem" }}>
+    Think of it like weather in a mild climate: daily temperatures go up and down, but the overall pattern doesn’t drift endlessly hotter or
+    colder.
+  </li>
+</ul>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+<p>
+  <strong>Formally,</strong> a time series $$ \{ X_t \} $$ is called <em>weakly stationary</em> if it satisfies these three conditions:
+</p>
+
+<div align="center">
+  
+$$
+E[X_t] = \mu,\quad Var[X_t] = \sigma^2,\quad Cov(X_t, X_{t-h}) = \gamma(h)
+$$
+
+</div>
+
+<div style={{ fontSize: "1.1rem", lineHeight: 1.8, marginTop: "0rem" }}>
+  <ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", marginTop: "0rem" }}>
+    <li style={{ marginTop: "0.3rem" }}>
+      The <strong>expected value</strong> (mean) $$\mu$$ is constant over time.
+      <span style={{ display: "block", color: "#555", fontSize: "0.95rem", marginTop: "0.25rem" }}>
+        🔸 In other words, at any time point $$t$$, the random variable $$X_t$$ is drawn from the same distribution with **mean** $$\mu$$.
+      </span>
+    </li>
+    <li style={{ marginTop: "0.6rem" }}>
+      The <strong>variance</strong> $$\sigma^2$$ is constant and finite.
+      <span style={{ display: "block", color: "#555", fontSize: "0.95rem", marginTop: "0.25rem" }}>
+        🔸 The **spread of possible values** doesn’t change as you move along the time axis.
+      </span>
+    </li>
+    <li style={{ marginTop: "0.6rem" }}>
+      The <strong>covariance</strong> between any two points depends only on their separation (the lag $$h$$), not on where they are in
+      time.
+      <span style={{ display: "block", color: "#555", fontSize: "0.95rem", marginTop: "0.25rem" }}>
+        🔸 For example, the relationship between $$X_{10}$$ and $$X_{5}$$ is the same as between $$X_{110}$$ and $$X_{105}$$ if the lag is
+        5.
+      </span>
+    </li>
+  </ul>
+</div>
+
+<br />
+
+<p>
+  These conditions ensure that the statistical properties you estimate from a sample don’t drift or explode over time which is a **key
+  requirement** for many forecasting models to perform **reliably**.
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+# <h3 style={{ fontSize: "1.4rem", fontWeight: 600, marginBottom: "0.5rem" }}>🔸 To make this concrete, let’s look at two familiar examples and prove their <strong>Stationarity</strong> </h3>
+
+<br />
+
+<ul style={{ fontSize: "1.05rem", lineHeight: 1.8 }}>
+  <li style={{ marginBottom: "1rem" }}>
+    <strong> Stationary Example 1 - White Noise:</strong>
+    <p style={{ marginTop: "0.6rem" }}>
+    **Formally**, as I discussed in the 
+    <a href="/blog/time_series_an_introduction" style={{ color: "#007acc", textDecoration: "underline" }}>"Introductory Time Series Post"</a>, 
+    white noise satisfies:
+    <span style={{ display: "block", marginTop: "2rem", marginBottom: "2em"}} align="center">
+      $$ E[w_t] = 0, \quad Var[w_t] = \sigma^2, \quad Cov[w_t, w_{t-h}] = 0 \; (h \neq 0). $$
+    </span>
+    </p>
+    <p style={{ marginTop: "0.6rem" }}>
+    This shows that the mean $$( \mu )$$ is zero, the variance $$( \sigma^2 )$$ is constant, and that each value is **uncorrelated** with the others meanings its **Perfectly Stationary**.
+    </p>
+    <p style={{ marginTop: "0.6rem" }}>
+    **You can see this visually below**: the plot jumps around randomly without drifting up or down, and the spread stays uniform.
+    </p>
+    <img
+  src="/assets/patters-that-persist/white_noise_example.png"
+  loading="lazy"
+  alt="White Noise Example from the first blog"
+  style={{ borderRadius: "0.5rem", margin: "1rem 0", maxWidth: "100%", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
+/>
+  </li>
+
+{" "}
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+<li style={{ marginBottom: "1rem" }}>
+  <strong>Stationary Example 2 - Moving Average:</strong>
+  <p style={{ marginTop: "0.6rem" }}>
+    A simple Moving Average (MA) process smooths white noise by averaging it with its neighbors. 
+    For example, here we use a window of three values:
+  </p>
+
+<div align="center" style={{ margin: "1.5rem 0" }}>
+  $$ x_t = \frac{1} {3}(w_{t - 1} + w_t + w_{t + 1}) $$
+</div>
+
+<p style={{ marginTop: "0.6rem" }}>
+  <strong>Step 1:</strong> Compute the mean:
+</p>
+<div align="center" style={{ margin: "1rem 0" }}>
+  $$ E[x_t] = E\left[ \frac{1} {3}(w_{t - 1} + w_t + w_{t + 1}) \right] = \frac{1} {3}(0 + 0 + 0) = 0. $$
+</div>
+
+  <p style={{ marginTop: "0.6rem" }}>
+    <strong>Step 2:</strong> Compute the variance:
+  </p>
+  <div align="center" style={{ margin: "1rem 0" }}>
+    $$ Var[x_t] = Var\left[ \frac{1}{3}(w_{t-1} + w_t + w_{t+1}) \right] = \frac{1}{9} Var[w_{t-1} + w_t + w_{t+1}]. $$
+  </div>
+  <div align="center" style={{ margin: "1rem 0" }}>
+    $$ Var[w_{t-1} + w_t + w_{t+1}] = 3 \sigma^2 \quad \text{(since they are uncorrelated)}. $$
+  </div>
+  <div align="center" style={{ margin: "1rem 0" }}>
+    $$ \Rightarrow Var[x_t] = \frac{\sigma^2}{3}. $$
+  </div>
+
+{" "}
+
+<p style={{ marginTop: "0.6rem" }}>
+  So, **the mean is zero**, **the variance is constant**, and the **covariance depends only on lag** - satisfying the conditions for weak
+  stationarity.
+</p>
+
+{" "}
+
+<p style={{ marginTop: "0.6rem" }}>
+  <strong>Visually,</strong> you can see below that the series stays centered around zero with a stable spread. Unlike pure white noise,
+  nearby points move together more smoothly - **they’re slightly correlated**.
+</p>
+
+  <img
+    src="/assets/patters-that-persist/smoothed_white_noise.png"
+    loading="lazy"
+    alt="Moving Average Example"
+    style={{
+      borderRadius: "0.5rem",
+      margin: "1rem 0",
+      maxWidth: "100%",
+      boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+    }}
+  />
+</li>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+<li style={{ marginBottom: "1rem" }}>
+  <strong>Non-Stationary Example - Random Walk with Drift:</strong>
+  <p style={{ marginTop: "0.6rem" }}>
+    A Random Walk with Drift is a classic example of a non-stationary process. 
+    It accumulates both random shocks and a consistent trend over time:
+  </p>
+
+{" "}
+
+<div align="center" style={{ margin: "1rem 0" }}>
+  $$ x_t = x_{t - 1} + \delta + w_t $$
+</div>
+
+{" "}
+
+<p style={{ marginTop: "0.6rem" }} align="center">
+  where: - $$ \delta $$ is a **constant drift term**. - $$ w_t $$ is **white noise**.
+</p>
+
+{" "}
+
+<p style={{ marginTop: "0.6rem" }}>
+  <strong>Step 1:</strong> Compute the mean:
+</p>
+<div align="center" style={{ margin: "1rem 0" }}>
+  $$ E[x_t] = E[x_{t - 1}] + \delta + E[w_t] = E[x_{t - 1}] + \delta. $$
+</div>
+<p style={{ marginTop: "0.6rem" }}>This recursion implies the mean grows linearly over time:</p>
+<div align="center" style={{ margin: "1rem 0" }}>
+  $$ E[x_t] = t \cdot \delta. $$
+</div>
+
+{" "}
+
+<p style={{ marginTop: "0.6rem" }}>
+  <strong>Step 2:</strong> Compute the variance:
+</p>
+<div align="center" style={{ margin: "1rem 0" }}>
+  $$ Var[x_t] = Var[x_{t - 1}] + Var[w_t] = Var[x_{t - 1}] + \sigma^2. $$
+</div>
+<p style={{ marginTop: "0.6rem" }}>Unfolding this shows the variance increases with time:</p>
+<div align="center" style={{ margin: "1rem 0" }}>
+  $$ Var[x_t] = t \cdot \sigma^2. $$
+</div>
+
+{" "}
+
+<p style={{ marginTop: "0.6rem" }}>So, the mean is not constant and the variance grows indefinitely - **violating stationarity**.</p>
+
+{" "}
+
+<p style={{ marginTop: "0.6rem" }}>
+  <strong>Visually,</strong> you can see below that the series does not hover around a stable average but drifts upward due to the constant
+  trend, and the spread gets wider over time - **clear signs of non-stationarity**.
+</p>
+
+  <img
+    src="/assets/patters-that-persist/random_walk_with_drift.png"
+    loading="lazy"
+    alt="Random Walk with Drift Example"
+    style={{
+      borderRadius: "0.5rem",
+      margin: "1rem 0",
+      maxWidth: "100%",
+      boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+    }}
+  />
+</li>
+
+</ul>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+<p>
+  So, how do you tell if a series is non-stationary <em>**in practice**</em>? Look for telltale signs in a plot: an **obvious upward or
+  downward trend**, or a **spread that gets wider or narrower**. Many real-world signals (like **stock prices**) show these traits. Later,
+  we’ll see how to transform them to get a **stationary version** you can safely model.
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "2rem" }} />
+
+# <h2 id="types-of-stationarity">2 · Different Flavours of Stationarity </h2>
+
+<br />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.0rem" }}>
+  Not all stationarity is created equal. Statisticians love to label things, so you'll come across different flavours:
+  <strong> strict stationarity, weak stationarity (Usually the "Crowd Favourite"), trend stationarity,</strong> and <strong>difference stationarity.</strong>
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.0rem", marginBottom: "0.5rem" }}>
+  <strong>1. Strict Stationarity</strong>:
+<p style={{ marginTop: "0.5rem", marginBottom: "0.0rem" }}>
+  This is the strongest flavour. <strong>Formally</strong>, a time series $$( \{ X_t \} )$$ is strictly stationary if its entire joint probability
+  distribution does not change when shifted in time. 
+  In other words, the full statistical behavior - not just **mean or variance**, but all possible properties -
+  stays **identical** for any collection of values and its **time-shifted (lagged)** version.
+</p>
+
+</p>
+
+<div align="center" style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  $$ (X_{t_1}, X_{t_2}, ..., X_{t_k}) \overset{d}{=} (X_{t_1+h}, X_{t_2+h}, ..., X_{t_k+h}) $$
+</div>
+
+<p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  In other words, the entire behaviour of the series looks statistically identical no matter where you start watching it.
+  <p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+    **While beautiful in theory**, strict stationarity is rare in the real world and often too strong to verify - so we usually settle for
+    weaker conditions instead. (Side-note: **White-noise** and **Moving-average** series are **strictly stationary**)
+  </p>
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.0rem", marginBottom: "0.5rem" }}>
+  <strong>2. Weak (or Second-Order) Stationarity</strong>:
+</p>
+<p style={{ marginTop: "0.5rem", marginBottom: "0.0rem" }}>
+  This is the most practical and commonly assumed form. <strong>Formally</strong>, a time series $$( \{ X_t \} )$$ is weakly stationary if:
+</p>
+<div align="center" style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  $$ E[X_t] = \mu,\quad Var[X_t] = \sigma^2,\quad Cov(X_t, X_{t-h}) = \gamma(h) $$
+</div>
+<p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  That means the mean and variance are constant, and the covariance depends only on the lag $$ h $$, not on the actual time points.
+  <strong>Side Note:</strong> This is not the same as a <strong>strictly stationary</strong> series.
+  Strict stationarity does not even mention lags - instead, it requires that the entire joint distribution stays the same when shifted:
+</p>
+
+<div align="center" style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  $$ (X_{t_1}, X_{t_2}, ..., X_{t_k}) \overset{d}{=} (X_{t_1 + h}, X_{t_2 + h}, ..., X_{t_k + h}) \quad \forall t_1, t_2, ..., t_k,\; \forall h. $$
+</div>
+
+<p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  So while <strong>weak stationarity</strong> checks a few moments (mean, variance, covariance with lag),
+  <strong>strict stationarity</strong> guarantees that the whole probabilistic structure is invariant, no matter how you shift it.
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Most statistical time series models (like ARMA) assume weak stationarity because it’s **practical** to check and holds for many
+  **real-world** signals after pre-processing.
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.0rem", marginBottom: "0.5rem" }}>
+  <strong>3. Trend Stationarity</strong>:
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Sometimes, a time series shows a clear deterministic trend - like a line that steadily goes up or down - but its deviations around that
+  line behave in a stationary way. This is called <strong>trend stationarity</strong>.
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>Mathematically, a trend stationary process can be written as:</p>
+
+<div align="center" style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  $$ X_t = \alpha + \beta t + y_t $$
+</div>
+
+<p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  where $$ \alpha + \beta t $$ is the deterministic trend (a straight line) and $$ y_t $$ is a **stationary noise process** for example
+  (**It doesn't have to be noise any stationary process is fine**). In other words, all the non-stationarity comes from the predictable
+  trend - not from the noise itself.
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Below you can see an example: the green curve is a trend plus noise, while the dashed blue line shows the underlying trend. Removing that
+  line leaves behind only the **stationary** wiggles (You can check-out the full code for this on the **Blog GitHub Repo**):
+  <hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+  <div style={{ display: "flex", justifyContent: "center", margin: "1rem 0" }}>
+    <a href="https://github.com/Youssef-Malek2004/Blog-Notebooks" target="_blank" rel="noopener noreferrer">
+      Blog GitHub Repo: Found In the Loop Repository
+    </a>
+  </div>
+  <hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+</p>
+
+<img
+  src="/assets/patters-that-persist/trend_with_white_noise_and_line.png"
+  loading="lazy"
+  alt="Trend with White Noise and Underlying Trend"
+  style={{
+    borderRadius: "0.5rem",
+    margin: "1rem 0",
+    maxWidth: "100%",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  }}
+/>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>But how could we recover stationarity?</strong> If you remove the trend - for example, by fitting a linear regression and
+  subtracting the fitted line ("Hope I'm not spoiling the rest of the blog haha" ~ Youssef) - the remaining residuals $$ y_t $$ are
+  **stationary**.
+  <p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+    This makes it possible to model and forecast the stable part without being **misled by the trend**.
+  </p>
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.0rem", marginBottom: "0.5rem" }}>
+  <strong>4. Difference Stationarity</strong>:
+</p>
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Here, the series itself is **not stationary** but becomes **stationary once you take the difference between consecutive values**.
+</p>
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>For example, a simple **random walk**:</p>
+<div align="center" style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  $$ X_t = X_{t - 1} + w_t $$
+</div>
+<p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>is **not stationary**, but its first difference:</p>
+<div align="center" style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  $$ \Delta X_t = X_t - X_{t - 1} = w_t $$
+</div>
+<p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  is just white noise, **which is stationary**. This is the principle behind ARIMA models: they difference non-stationary series until
+  they’re stable enough to model.
+</p>
+
+<p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+  🔸 You may ask, **Does the same hold if it was Random Walk and Drift?**
+  <p style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
+    If the series has a drift (like $$X_t = X_{t - 1} + d + w_t$$), then the first difference becomes $$ΔX_t = d + w_t$$, which is still
+    **stationary** because it has **constant mean and variance**.
+  </p>
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  In practice, you usually test for **weak stationarity**, and if it fails, you difference or detrend the data to force it to behave.
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+# <h2 id="autocorrelation-and-acf">3 · Measuring Time-Based Dependence: Autocovariance, Autocorrelation & ACF </h2>
+
+<br />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Now that you know what it means for a series to be stationary,
+  <p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+    **The next big question is**: **Assuming a series is weakly stationary** (real-world use-cases don't assume strict, from now on I will
+    refer to weakly stationary as stationary), **how do we measure how past values relate to future ones?**
+  </p>
+  <p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+    The tools for this are the <strong>autocovariance</strong> and <strong>autocorrelation</strong> functions.
+  </p>
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>1. Autocovariance Function (ACV)</strong>:
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  For a **stationary** series $${X_t}$$ with mean $$\mu$$, the <strong>autocovariance function</strong> at lag $h$ is defined as:
+</p>
+
+<div align="center" style={{ marginTop: "1.5rem", marginBottom: "1.5rem" }}>
+  $$ \gamma(h) = Cov(X_t, X_{t - h}) = E[(X_t - \mu)(X_{t - h} - \mu)] $$
+</div>
+
+<p style={{ marginTop: "0.0rem", marginBottom: "0.5rem" }}>
+  This measures how much two points $h$ time steps apart move together. For example:
+</p>
+
+<ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", marginTop: "0rem" }}>
+  <li style={{ marginTop: "0.5rem" }}>
+    If $$\gamma(h) = 0$$, then the values are **uncorrelated at lag $$h$$** - there’s no linear predictability at that distance.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    If $$\gamma(h) > 0$$, then if **one value is above the mean**, the **other tends to be above the mean** too.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    If $$\gamma(h) < 0$$, then if **one value is above the mean**, the other tends to be **below the mean** - **anti-correlation**.
+  </li>
+</ul>
+
+<hr style={{ marginTop: "1.5rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>2. Autocorrelation Function (ACF)</strong>:
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  The <strong>autocorrelation function</strong> standardizes the **autocovariance** to a scale of -1 to 1, this makes it easier to make
+  decisions regarding **autocovariance** as it standerdizes the scale:
+</p>
+
+<div align="center" style={{ marginTop: "1.5rem", marginBottom: "0.5rem" }}>
+  $$ \displaystyle \rho(h) = Corr(X_t, X_{t-h}) = \frac{\gamma(h)}{\gamma(0)} = \frac{Cov(X_t, X_{t-h})}{Var(X_t)}. $$
+</div>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>So:</p>
+
+<ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", marginTop: "0rem" }}>
+  <li style={{ marginTop: "0.5rem" }}>
+    $$\rho(0) = 1$$ by definition - The **autocovariance** $$\gamma(h)$$ when the lag is 0 is just the **autocovariance** between the series
+    and itself, which is actually the **variance**.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>$$\rho(h)$$ shows the strength and direction of linear dependence at lag $h$.</li>
+  <li style={{ marginTop: "0.5rem" }}>
+    In practice, we estimate it from data using the <strong>sample autocorrelation function</strong> (As you can see we are using the
+    **sampled mean** $$\bar{x}$$):
+  </li>
+</ul>
+
+<div align="center" style={{ marginTop: "1.5rem", marginBottom: "1.5rem" }}>
+  $$ \displaystyle \hat{\rho}(h) = \frac{ \sum_{t = h+1}^{n} (x_t - \bar{x}) (x_{t-h} - \bar{x}) }{ \sum_{t=1}^{n} (x_t - \bar{x})^2 }. $$
+</div>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  The <strong>ACF plot</strong> is a crucial tool: it visualizes $\hat{\rho}(h)$ for many lags (**Even thought it won't be explained in this section, check out its example below**). 
+  <p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+    **Spikes** that stand out beyond the  “confidence bands” hint at significant time dependence. But what are **Confidence Bands** and how do we **calculate** them? That will be answered in Section 4.
+  </p>
+</p>
+
+<img
+  src="/assets/patters-that-persist/sample_acf_plot_dashed.png"
+  alt="Sample ACF plot with dashed confidence limits"
+  style={{
+    borderRadius: "0.5rem",
+    margin: "1rem 0",
+    maxWidth: "100%",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  }}
+/>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  If you can guess what the **95% Confidence limits** correctly, contact me on LinkedIn you'll get a Present (**Find the answer below in
+  Section 4**).
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>3. Cross-Covariance Function (CCV) and Cross-Correlation Function (CCF)</strong>:
+</p>
+
+<p style={{ marginTop: "1.5rem", marginBottom: "0.5rem" }}>
+  **So far**, we’ve measured how <em>one series</em> relates to its **lagged** itself. What if you have two series, say $${X_t}$$ and $$
+  {Y_t}$$, and want to know how they move together across time? This is where the <strong>cross-covariance</strong> and <strong>
+    cross-correlation
+  </strong> come in.
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "1.5rem" }}>
+  The <strong>cross-covariance function</strong> is:
+</p>
+
+<div align="center" style={{ marginTop: "0.5rem", marginBottom: "1.5rem" }}>
+  $$ \displaystyle \gamma_{xy}(h) = Cov(X_{t + h}, Y_t) = E[(X_{t + h} - \mu_X)(Y_t - \mu_Y)] $$
+</div>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  🔸 It measures how a value in $X$ at time $t + h$ **relates** to a value in $Y$ at time $t$. **Positive lags** mean $X$ follows $Y$;
+  **negative lags** mean $X$ leads $Y$.
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Similarly, the <strong>cross-correlation function</strong> standardizes this:
+</p>
+
+<div align="center" style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  $$ \displaystyle \rho_{XY}(h) = \frac{\gamma_{XY}(h)}{ \sqrt{Var(X) Var(Y)} } $$
+</div>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  The <strong>CCF plot</strong> helps check if two time series are linearly related with a lead-lag structure. For example, does **sales
+  volume** today predict **stock price** tomorrow? It can even help us predict if **human-mobility** yesterday would affect **Covid-19**
+  case counts tomorrow, but be careful!
+  <br />
+  **Both series must be at least weakly stationarity** and with real-world datat that is rarely the case!
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  In practice, these functions are your eyes into temporal structure. Before building AR, MA, ARMA, or ARIMA models (**or any models that
+  require Stationarity**), you inspect the **ACF** and **CCF** plots to detect lags, hidden relationships, or the need for differencing.
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+# <h2 id="acf-interpretation">4 · Interpreting ACF Plots & Judging Significance with Standard-Error Bands </h2>
+
+<br />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  You’ve seen how the <strong>ACF</strong> lays out&nbsp;
+  $$( \hat{\rho}(h) )$$ at successive lags.  But <em>which</em> spikes really matter?
+  In other words, when is an autocorrelation at lag \(h\)
+  significantly different from zero and not just random noise?
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>1. Sampling variability of $$ \hat{\rho}(h) $$</strong> - the rule-of-thumb band:
+</p>
+
+<div align="center" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+  $$ \displaystyle \text{SE}\big[ \hat{\rho}(h) \big] \;\approx\; \frac{1}{\sqrt{n}} \quad\Longrightarrow  \pm\,\frac{1.96}{\sqrt{n}}\,. $$
+</div>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  If the <strong>series is white noise</strong>, every spike falls inside those dashed lines about 95 % of the time. A spike that pokes
+  outside is evidence of linear dependence at that lag.
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  What this means in <strong>simple terms</strong> is: If you see a spike outside the dashed lines (
+  <em>**see the example below or just above**</em>), there’s only about a 5% chance this **happened by random chance** if the series is pure
+  white noise.
+  <p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>So, it suggests there’s likely real **autocorrelation** at that lag.</p>
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  ⚠️ **Keep in mind**: this rule-of-thumb band is exact only for **pure white noise**. In real-world data, most series do have genuine
+  autocorrelation - so it’s normal and expected to see spikes that breach the band. These out-of-band spikes highlight lags that contribute
+  useful structure for your model this just serves as **assurance** that if you are using a **real-world dataset** and you find a spike at a
+  certain lag $$h$$ that exceeds the confidence intervals, most likely that lag is meaningful.
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>**That's it!**</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>2. Reading an ACF at a glance</strong>
+</p>
+
+<ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", marginTop: "0rem" }}>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>Tails off slowly (many lags stay high)</strong> &rarr; Signals a non-stationary series with a possible trend or unit root. Your
+    fix? Try differencing until the tail drops off quickly.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>Sharp cutoff after lag \(q\)</strong> &rarr; Classic footprint of a pure <em>MA(q)</em> process. Beyond lag \(q\), the series is
+    just noise.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>Strong seasonal spikes</strong> at lag \(s\) &rarr; Repeating cycles (like a 7-day bump for weekly sales). This is your clue to
+    include seasonal terms.
+  </li>
+</ul>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  One small but crucial point: the ACF at lag zero is always exactly <strong>1</strong>. Why? Because at lag 0, you’re literally correlating
+  the series with itself - **so there’s perfect agreement**. Mathematically, you’re dividing the variance by itself:
+</p>
+
+<div align="center" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+  $$ \rho(0) = \frac{\gamma(0)}{\gamma(0)} = 1. $$
+</div>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  This is why every **ACF plot starts with a spike at lag 0 pinned at 1**. It’s the benchmark for comparing how much structure exists at
+  other lags. Spikes that reach high beyond lag 0 hint at persistence, trends, or other dependencies.
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Below, you can see this in action for the AR(1) series from Section 3: the spike at lag 0 is exactly 1, and the next few lags gradually
+  taper off inside the dashed ±1.96/√n limits - except the first couple, which stick out just as you’d expect for a φ = 0.7 process (**More
+  on this in next posts**).
+</p>
+
+<img
+  src="/assets/patters-that-persist/sample_acf_plot_dashed.png"
+  loading="lazy"
+  alt="ACF with 95% confidence limits"
+  style={{
+    borderRadius: "0.5rem",
+    margin: "1rem 0",
+    maxWidth: "100%",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  }}
+/>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  So far, we've built the intuition for **stationarity**, **dependence**, and how to **spot meaningful lags**. But real-world data rarely
+  comes **gift-wrapped**: it mixes trends, seasonal swings, and leftover noise. Up next, we’ll break apart a real time series step-by-step,
+  pulling out the trend, the seasonal heartbeat, and the random residuals that remain. Trust me: once you see this, **you’ll never look at a
+  squiggly line the same way again**.
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+# <h2 id="decomposition-and-trend">5 · Unpacking a Real-World Series: Trend&nbsp;&nbsp;·&nbsp;&nbsp;Seasonality&nbsp;&nbsp;·&nbsp;&nbsp;Residual </h2>
+
+<br />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Ready to leave pure **theory behind**? Let’s dissect an **honest-to-goodness** (**"real-world" for those of you goons who don't know good
+  movie references**) dataset and watch the hidden pieces **fall apart**: **trend**, **seasonality**, and leftover **random wiggles**. We’ll
+  finish by catching the trend with a **one-line regression**.
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>Dataset of choice:</strong> the classic <em>AirPassengers</em> series (monthly airline passengers, 1949-1960). Why? It has:
+</p>
+
+<ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", marginTop: "0rem" }}>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>Trend</strong>: commercial aviation exploded post-WWII.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>Seasonality</strong>: holiday peaks every 6-12 months.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    A dash of <strong>noise</strong> so it feels real (would've added salt as well).
+  </li>
+</ul>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>1&nbsp;&middot;&nbsp;Look at the raw signal first</strong>
+</p>
+
+<img
+  src="/assets/patters-that-persist/airpassengers_raw.png"
+  loading="lazy"
+  alt="AirPassengers raw series"
+  style={{
+    borderRadius: "0.5rem",
+    margin: "1rem 0",
+    maxWidth: "100%",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  }}
+/>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Even without stats you can spot: a steady climb (trend) and saw-tooth holiday bumps (seasonality).
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>2&nbsp;&middot;&nbsp;Seasonal Decomposition (Multiplicative)</strong>
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Below, we break down the AirPassengers series into three building blocks. This uses a **multiplicative model**, so the seasonal amplitude
+  grows with the trend - perfect for airline data!
+</p>
+
+<img
+  src="/assets/patters-that-persist/airpassengers_trend.png"
+  loading="lazy"
+  alt="Trend component"
+  style={{
+    borderRadius: "0.5rem",
+    margin: "1rem 0",
+    maxWidth: "100%",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  }}
+/>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>Trend</strong> (blue) - the smooth backbone showing long-term passenger growth.
+</p>
+
+<img
+  src="/assets/patters-that-persist/airpassengers_seasonal.png"
+  loading="lazy"
+  alt="Seasonal component"
+  style={{
+    borderRadius: "0.5rem",
+    margin: "1rem 0",
+    maxWidth: "100%",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  }}
+/>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>Seasonality</strong> (orange) - a repeating annual cycle, larger in peak years due to multiplicative growth.
+</p>
+
+<img
+  src="/assets/patters-that-persist/airpassengers_residuals.png"
+  loading="lazy"
+  alt="Residuals component"
+  style={{
+    borderRadius: "0.5rem",
+    margin: "1rem 0",
+    maxWidth: "100%",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  }}
+/>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>Residuals</strong> (grey) - the leftover wiggles that the trend and seasonality couldn’t explain.
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>3&nbsp;&middot;&nbsp;A one-line regression to catch&nbsp;the trend</strong>
+</p>
+
+<div align="center" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+  $$ X_t \;=\; \beta_0 \;+\; \beta_1 \, t \;+\; \varepsilon_t $$
+</div>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Fitting an OLS line (**Ordinary Least Squares, Will explore this and the Gaussian-Markov theorom next Post, Stay Tuned!**)
+</p>
+
+<img
+  src="/assets/patters-that-persist/airpassengers_trend_fit.png"
+  loading="lazy"
+  alt="Linear trend fitted to AirPassengers"
+  style={{
+    borderRadius: "0.5rem",
+    margin: "1rem 0",
+    maxWidth: "100%",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  }}
+/>
+
+<ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", marginTop: "0rem" }}>
+  <li style={{ marginTop: "0.5rem" }}>The dashed blue line is the fitted trend. Notice how neatly it threads the data.</li>
+  <li style={{ marginTop: "0.5rem" }}>
+    In a full ARIMA workflow you’d <em>detrend</em> (subtract the line) and <em>deseasonalise</em> (divide by the seasonal factor) before
+    modelling the residuals.
+  </li>
+</ul>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>4&nbsp;&middot;&nbsp;Detrending&nbsp;- stripping out the backbone</strong>
+</p>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Once the fitted trend is removed, what’s left is the <strong>detrended series</strong> - the part of the data that a linear drift{" "}
+  <em>cannot</em> explain. If the trend captured most of the long-run movement, the detrended line should hover around a relatively stable
+  level and reveal <strong>seasonal pulses</strong> even more clearly.
+</p>
+
+<img
+  src="/assets/patters-that-persist/airpassengers_detrended.png"
+  loading="lazy"
+  alt="AirPassengers after subtracting fitted trend"
+  style={{
+    borderRadius: "0.5rem",
+    margin: "1rem 0",
+    maxWidth: "100%",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+  }}
+/>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Notice how the big upward slope is gone, but the <strong>seasonal peaks</strong> are still marching in a 12-month rhythm. This is exactly
+  the state you want before fitting models that assume a <strong>stationary mean</strong>.
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>Why bother?</strong>
+  <br />• <strong>Trend&nbsp;≠&nbsp;Signal</strong>: Many forecasting models stumble on a strong drift.
+  <br />• <strong>Seasonality&nbsp;≠&nbsp;Noise</strong>: It’s predictable and should be modeled, not ignored.
+  <br /> • <strong>Residuals</strong>: After removing trend & seasonality, any structure left in the residuals will show up in the <strong>
+    ACF / PACF
+  </strong> - your roadmap for ARIMA orders.
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  <strong>Quick recap:</strong>
+  Decomposition shows you <em>what</em> pattern lives in your data; regression quantifies <em>how strong</em> that pattern is. Together they
+  turn a chaotic squiggle into an explainable signal.
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<h2 style={{ fontSize: "1.75rem", marginBottom: "1rem" }}>Coming Up Next · Blog&nbsp;#3</h2>
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  Foundations in place, it’s time to pick up sharper tools.
+  <strong>Blog&nbsp;#3</strong> will take you from eyeballing structure to
+  <strong>statistically proving</strong> it - and bending it to your forecasting will.
+</p>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<ul style={{ paddingLeft: "1.5rem", listStyleType: "disc", marginTop: "0rem" }}>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>OLS Regression for Time-Series</strong> - not just lines, but lines that respect order.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>Inference&nbsp;&amp;&nbsp;Diagnostics</strong>: t-tests, F-tests, R², plus
+    <strong>AIC</strong>/<strong>BIC</strong> for model sanity-checks.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>Log Transformations</strong> - when variance explodes, log it and breathe easier.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>Scatterplots &amp; Matrix Plots</strong> to catch hidden non-linearity at a glance.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>Differencing for Linearity</strong> - taming curves so linear models bite.
+  </li>
+  <li style={{ marginTop: "0.5rem" }}>
+    <strong>Dummy Variables</strong> for sudden policy shifts, pandemics, or holiday shocks.
+  </li>
+</ul>
+
+<hr style={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+<p style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+  All wrapped in hands-on code blocks and colour-matched plots, so you can <strong>see</strong> the math do its magic - and copy-paste it
+  into your own pipeline.
+</p>
+
+<p style={{ textAlign: "center", fontSize: "1.1rem", fontStyle: "italic", marginTop: "1rem" }}>
+  From recognising patterns to <strong>quantifying</strong> them - see you in Blog&nbsp;#3!
+</p>
+
+<hr style={{ marginTop: "2rem", marginBottom: "0rem" }} />

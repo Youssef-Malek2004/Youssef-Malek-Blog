@@ -7,6 +7,7 @@ import RewardChart from "../components/RewardChart";
 import QValueChart from "../components/QValueChart";
 import PolicyChart from "../components/PolicyChart";
 import TimeSeriesIntroList from "../components/blog-components/blog-101/TimeSeriesIntroList";
+import PatternsThatPersistIntroList from "../components/blog-components/blog-102/IntroList";
 
 import { CodeBlock } from "../components/CodeBlock";
 import type { ComponentProps } from "react";
@@ -18,6 +19,7 @@ const mdxComponents = {
   QValueChart,
   PolicyChart,
   TimeSeriesIntroList,
+  PatternsThatPersistIntroList,
 };
 
 /**
