@@ -36,9 +36,18 @@
   </url>
 
     <url>
+    <loc>https://www.youssefmalek.blog/blog/microsoft_x_procore_experience_&_learnings</loc>
+    <lastmod>2025-09-03</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+    <url>
     <loc>https://www.youssefmalek.blog/blog/patterns_that_persist</loc>
     <lastmod>2025-06-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  
 </urlset>
