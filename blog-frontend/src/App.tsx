@@ -9,6 +9,7 @@ import { Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import FAQs from "./pages/Faqs";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const [isSubscribeOpen, setIsSubscribeOpen] = useState(false);
@@ -26,6 +27,8 @@ function App() {
       </Routes>
       <SubscribeModal isOpen={isSubscribeOpen} setIsOpen={setIsSubscribeOpen} />
       <Toaster richColors position="top-center" />
+
+      <Analytics />
     </ThemeProvider>
   );
 }
